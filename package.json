@@ -1,0 +1,22 @@
+{
+  "name": "expense_tracker",
+  "version": "1.0.0",
+  "description": "This web is used to track the expenses",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PTH-15/Expense_Tracker.git"
+  },
+  "author": "Prathmesh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PTH-15/Expense_Tracker/issues"
+  },
+  "homepage": "https://github.com/PTH-15/Expense_Tracker#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
