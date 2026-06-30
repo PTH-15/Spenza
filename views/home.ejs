@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flo — Home</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@700;800&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0e0f11;
+            --surface: #16181c;
+            --surface-2: #1e2026;
+            --border: rgba(255, 255, 255, 0.07);
+            --border-hover: rgba(255, 255, 255, 0.14);
+            --text: #f0f0ee;
+            --muted: #7a7c82;
+            --accent: #7c6ef5;
+            --accent-glow: rgba(124, 110, 245, 0.18);
+            --green: #3ecf8e;
+            --red: #f26c6c;
+            --amber: #f5a623;
+            --radius: 14px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* NAV */
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem 2rem;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: rgba(14, 15, 17, 0.88);
+            backdrop-filter: blur(14px);
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: var(--text);
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--muted);
+            font-size: 0.875rem;
+            font-weight: 500;
+            padding: 0.45rem 0.85rem;
+            border-radius: 8px;
+            transition: color 0.15s, background 0.15s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+            background: var(--surface);
+        }
+
+        .nav-links a.active {
+            color: var(--text);
+            background: var(--surface-2);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+        }
+
+        .btn {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 500;
+            padding: 0.5rem 1.1rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid var(--border);
+        }
+
+        .btn-ghost:hover {
+            color: var(--text);
+            border-color: var(--border-hover);
+            background: var(--surface);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #6a5ee0;
+            transform: translateY(-1px);
+        }
+
+        /* HERO */
+        .hero {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 5rem 2rem 3rem;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: var(--accent-glow);
+            border: 1px solid rgba(124, 110, 245, 0.3);
+            color: #a99cf8;
+            font-size: 0.78rem;
+            font-weight: 500;
+            padding: 0.3rem 0.85rem;
+            border-radius: 999px;
+            margin-bottom: 1.75rem;
+            letter-spacing: 0.02em;
+        }
+
+        .hero-badge .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        .hero h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 3.75rem);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -1.5px;
+            color: var(--text);
+            margin-bottom: 1.25rem;
+        }
+
+        .hero h1 em {
+            font-style: normal;
+            color: var(--accent);
+        }
+
+        .hero p {
+            font-size: 1.05rem;
+            color: var(--muted);
+            line-height: 1.7;
+            max-width: 520px;
+            margin: 0 auto 2.25rem;
+        }
+
+        .hero-cta {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-lg {
+            padding: 0.75rem 1.6rem;
+            font-size: 0.95rem;
+            border-radius: 10px;
+        }
+
+        /* WELCOME STRIP (logged-in state) */
+        .welcome-strip {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 0 2rem 2rem;
+        }
+
+        .strip-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem 1.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .strip-left h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.2rem;
+        }
+
+        .strip-left p {
+            font-size: 0.875rem;
+            color: var(--muted);
+        }
+
+        /* STATS ROW */
+        .stats-section {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 0 2rem 2.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem 1.5rem;
+            transition: border-color 0.15s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+        }
+
+        .stat-card.income::before {
+            background: var(--green);
+        }
+
+        .stat-card.expense::before {
+            background: var(--red);
+        }
+
+        .stat-card.savings::before {
+            background: var(--accent);
+        }
+
+        .stat-card.budget::before {
+            background: var(--amber);
+        }
+
+        .stat-card:hover {
+            border-color: var(--border-hover);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .stat-label .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .stat-card.income .dot {
+            background: var(--green);
+        }
+
+        .stat-card.expense .dot {
+            background: var(--red);
+        }
+
+        .stat-card.savings .dot {
+            background: var(--accent);
+        }
+
+        .stat-card.budget .dot {
+            background: var(--amber);
+        }
+
+        .stat-value {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-card.income .stat-value {
+            color: var(--green);
+        }
+
+        .stat-card.expense .stat-value {
+            color: var(--red);
+        }
+
+        .stat-card.savings .stat-value {
+            color: #a99cf8;
+        }
+
+        .stat-card.budget .stat-value {
+            color: var(--amber);
+        }
+
+        .stat-sub {
+            font-size: 0.78rem;
+            color: var(--muted);
+        }
+
+        /* BUDGET BAR */
+        .budget-bar-wrap {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 0 2rem 2.5rem;
+        }
+
+        .budget-bar-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem 1.75rem;
+        }
+
+        .budget-bar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 1rem;
+        }
+
+        .budget-bar-header h3 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .budget-pct {
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--amber);
+        }
+
+        .bar-track {
+            height: 8px;
+            background: var(--surface-2);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--accent), var(--amber));
+            width: 64%;
+            transition: width 1s ease;
+        }
+
+        .budget-bar-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.75rem;
+            font-size: 0.78rem;
+            color: var(--muted);
+        }
+
+        /* MAIN CONTENT AREA */
+        .main-grid {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 0 2rem 2rem;
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 1.25rem;
+        }
+
+        @media (max-width: 720px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+
+        /* RECENT EXPENSES */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .see-all {
+            font-size: 0.8rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .see-all:hover {
+            text-decoration: underline;
+        }
+
+        .transactions-list {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .tx-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.1s;
+        }
+
+        .tx-item:last-child {
+            border-bottom: none;
+        }
+
+        .tx-item:hover {
+            background: var(--surface-2);
+        }
+
+        .tx-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .tx-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .tx-title {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tx-cat {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-top: 0.15rem;
+        }
+
+        .tx-right {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .tx-amount {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .tx-amount.credit {
+            color: var(--green);
+        }
+
+        .tx-amount.debit {
+            color: var(--red);
+        }
+
+        .tx-date {
+            font-size: 0.72rem;
+            color: var(--muted);
+            margin-top: 0.15rem;
+        }
+
+        /* QUICK ACTIONS */
+        .quick-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            margin-top: 1rem;
+        }
+
+        .quick-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--surface-2);
+            color: var(--text);
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .quick-btn:hover {
+            border-color: var(--accent);
+            background: var(--accent-glow);
+            color: #a99cf8;
+            transform: translateX(2px);
+        }
+
+        .quick-btn .icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .quick-btn .icon.purple {
+            background: var(--accent-glow);
+        }
+
+        .quick-btn .icon.green {
+            background: rgba(62, 207, 142, 0.12);
+        }
+
+        .quick-btn .icon.red {
+            background: rgba(242, 108, 108, 0.12);
+        }
+
+        .quick-btn .icon.amber {
+            background: rgba(245, 166, 35, 0.12);
+        }
+
+        .arrow {
+            margin-left: auto;
+            color: var(--muted);
+            font-size: 0.75rem;
+        }
+
+        /* ADD EXPENSE FAB */
+        .fab-wrap {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 200;
+        }
+
+        .fab {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            padding: 0.9rem 1.4rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(124, 110, 245, 0.4);
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .fab:hover {
+            background: #6a5ee0;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 28px rgba(124, 110, 245, 0.5);
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--muted);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAV -->
+    <nav>
+        <div class="logo">fl<span>o</span></div>
+        <% if (locals.user) { %>
+            <ul class="nav-links">
+                <li><a href="/" class="active">Home</a></li>
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/transactions">Transactions</a></li>
+                <li><a href="/reports">Reports</a></li>
+                <li><a href="/profile">Profile</a></li>
+            </ul>
+            <% } else { %>
+                <ul class="nav-links"></ul>
+                <% } %>
+                    <div class="nav-actions">
+                        <% if (locals.user) { %>
+                            <a href="/logout" class="btn btn-ghost">Log out</a>
+                            <% } else { %>
+                                <a href="/login" class="btn btn-ghost">Log in</a>
+                                <a href="/register" class="btn btn-primary">Get started</a>
+                                <% } %>
+                    </div>
+    </nav>
+
+    <% if (!locals.user) { %>
+        <!-- ── HERO (logged-out) ── -->
+        <section class="hero">
+            <div class="hero-badge">
+                <span class="dot"></span>
+                Your money, clearly
+            </div>
+            <h1>Track every rupee.<br /><em>Stress less.</em></h1>
+            <p>Flo gives you a clean view of where your money goes — income, expenses, budgets, and reports all in one
+                place.</p>
+            <div class="hero-cta">
+                <a href="/register" class="btn btn-primary btn-lg">Start for free</a>
+                <a href="/login" class="btn btn-ghost btn-lg">I have an account</a>
+            </div>
+        </section>
+
+        <% } else { %>
+
+            <!-- ── WELCOME STRIP (logged-in) ── -->
+            <div class="welcome-strip">
+                <div class="strip-card">
+                    <div class="strip-left">
+                        <h2>Good <%= new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 17 ? 'afternoon'
+                                : 'evening' %>, <%= user.name.split(' ')[0] %> 👋</h2>
+        <p>Here' s your financial snapshot for <strong>
+                                    <%= new Date().toLocaleString('default', { month: 'long' }) %></strong></p>
+                    </div>
+                    <a href="/transactions/add" class="btn btn-primary">+ Add expense</a>
+                </div>
+            </div>
+
+            <!-- ── STATS ROW ── -->
+            <div class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card income">
+                        <div class="stat-label"><span class="dot"></span>Total income</div>
+                        <div class="stat-value">₹<%= (locals.totalIncome || 0).toLocaleString('en-IN') %>
+                        </div>
+                        <div class="stat-sub">This month</div>
+                    </div>
+                    <div class="stat-card expense">
+                        <div class="stat-label"><span class="dot"></span>Total expenses</div>
+                        <div class="stat-value">₹<%= (locals.totalExpense || 0).toLocaleString('en-IN') %>
+                        </div>
+                        <div class="stat-sub">This month</div>
+                    </div>
+                    <div class="stat-card savings">
+                        <div class="stat-label"><span class="dot"></span>Savings</div>
+                        <div class="stat-value">₹<%= ((locals.totalIncome || 0) - (locals.totalExpense ||
+                                0)).toLocaleString('en-IN') %>
+                        </div>
+                        <div class="stat-sub">Income − Expenses</div>
+                    </div>
+                    <div class="stat-card budget">
+                        <div class="stat-label"><span class="dot"></span>Remaining budget</div>
+                        <div class="stat-value">₹<%= (locals.remainingBudget || 0).toLocaleString('en-IN') %>
+                        </div>
+                        <div class="stat-sub">of ₹<%= (locals.monthlyBudget || 0).toLocaleString('en-IN') %> budget
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── BUDGET BAR ── -->
+            <div class="budget-bar-wrap">
+                <div class="budget-bar-card">
+                    <div class="budget-bar-header">
+                        <h3>Monthly budget usage</h3>
+                        <span class="budget-pct">
+                            <%= locals.budgetUsedPct || 0 %>% used
+                        </span>
+                    </div>
+                    <div class="bar-track">
+                        <div class="bar-fill" 
+                        style="width: <%= Math.min(locals.budgetUsedPct || 0, 100) %>%;"></div>
+                    </div>
+                    <div class="budget-bar-footer">
+                        <span>₹<%= (locals.totalExpense || 0).toLocaleString('en-IN') %> spent</span>
+                        <span>₹<%= (locals.remainingBudget || 0).toLocaleString('en-IN') %> left</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── MAIN GRID ── -->
+            <div class="main-grid">
+
+                <!-- Recent Transactions -->
+                <div>
+                    <div class="section-header">
+                        <h2 class="section-title">Recent expenses</h2>
+                        <a href="/transactions" class="see-all">View all →</a>
+                    </div>
+
+                    <div class="transactions-list">
+                        <% if (locals.recentTransactions && recentTransactions.length> 0) { %>
+                            <% recentTransactions.forEach(tx=> { %>
+                                <div class="tx-item">
+                                    <div
+                                        class="tx-icon style=background: <%= tx.type === 'income' ? 'rgba(62,207,142,0.12)' : 'rgba(242,108,108,0.12)' %>">
+                                        <%= tx.type==='income' ? '💰' : categoryEmoji(tx.category) %>
+                                    </div>
+                                    <div class="tx-info">
+                                        <div class="tx-title">
+                                            <%= tx.title %>
+                                        </div>
+                                        <div class="tx-cat">
+                                            <%= tx.category %>
+                                        </div>
+                                    </div>
+                                    <div class="tx-right">
+                                        <div class="tx-amount <%= tx.type === 'income' ? 'credit' : 'debit' %>">
+                                            <%= tx.type==='income' ? '+' : '−' %>₹<%=
+                                                    Number(tx.amount).toLocaleString('en-IN') %>
+                                        </div>
+                                        <div class="tx-date">
+                                            <%= new Date(tx.date).toLocaleDateString('en-IN', { day: 'numeric' ,
+                                                month: 'short' }) %>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% }) %>
+                                    <% } else { %>
+                                        <div
+                                            style="padding: 2.5rem; text-align: center; color: var(--muted); font-size: 0.875rem;">
+                                            No transactions yet — <a href="/transactions/add"
+                                                style="color: var(--accent);">add your first one</a>
+                                        </div>
+                                        <% } %>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div>
+                    <div class="section-header">
+                        <h2 class="section-title">Quick actions</h2>
+                    </div>
+                    <div class="quick-card">
+                        <div class="quick-actions">
+                            <a href="/transactions/add" class="quick-btn">
+                                <span class="icon purple">➕</span>
+                                Add expense
+                                <span class="arrow">›</span>
+                            </a>
+                            <a href="/transactions/add?type=income" class="quick-btn">
+                                <span class="icon green">💰</span>
+                                Log income
+                                <span class="arrow">›</span>
+                            </a>
+                            <a href="/dashboard" class="quick-btn">
+                                <span class="icon amber">📊</span>
+                                Dashboard
+                                <span class="arrow">›</span>
+                            </a>
+                            <a href="/reports" class="quick-btn">
+                                <span class="icon purple">📈</span>
+                                View reports
+                                <span class="arrow">›</span>
+                            </a>
+                            <a href="/profile" class="quick-btn">
+                                <span class="icon red">⚙️</span>
+                                Profile & budget
+                                <span class="arrow">›</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /main-grid -->
+
+            <!-- FAB -->
+            <div class="fab-wrap">
+                <a href="/transactions/add" class="fab">+ Quick add</a>
+            </div>
+
+            <% } %>
+
+                <footer>
+                    &copy; <%= new Date().getFullYear() %> Flo — Personal Finance Tracker
+                </footer>
+
+</body>
+
+</html>
