@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/PTH-15/Expense_Tracker#readme",
   "dependencies": {
+    "dotenv": "^17.4.2",
     "ejs": "^6.0.1",
     "express": "^5.2.1",
     "mongodb": "^7.4.0",
