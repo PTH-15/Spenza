@@ -37,6 +37,46 @@ function isLoggedIn(req, res, next) {
     next();
 }
 
+function getWeeklyData(transactions) {
+  const days = [0,0,0,0,0,0,0];
+  const now = new Date();
+  const startOfWeek = new Date(now);
+  startOfWeek.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+  startOfWeek.setHours(0,0,0,0);
+
+  transactions.forEach(t => {
+    if (t.type !== 'expense') return;
+    const d = new Date(t.date);
+    if (d >= startOfWeek) {
+      const dayIndex = (d.getDay() + 6) % 7;
+      days[dayIndex] += t.amount;
+    }
+  });
+  return days;
+}
+
+function getMonthlyData(transactions) {
+  const months = Array(12).fill(0);
+  const year = new Date().getFullYear();
+  transactions.forEach(t => {
+    if (t.type !== 'expense') return;
+    const d = new Date(t.date);
+    if (d.getFullYear() === year) {
+      months[d.getMonth()] += t.amount;
+    }
+  });
+  return months;
+}
+
+function getCategoryBreakdown(transactions) {
+  const map = {};
+  transactions.filter(t => t.type === 'expense').forEach(t => {
+    map[t.category] = (map[t.category] || 0) + t.amount;
+  });
+  return Object.entries(map)
+    .map(([name, amount]) => ({ name, amount }))
+    .sort((a,b) => b.amount - a.amount);
+}
 function categoryEmoji(category) {
     switch (category) {
         case "Food":
@@ -205,6 +245,9 @@ app.get("/transaction", isLoggedIn, async (req, res) => {
     if (req.query.category) {
         query.category = req.query.category
     }
+    if (req.query.paymentMethod){ 
+        query.paymentMethod = req.query.paymentMethod;
+    }
     if (req.query.search) {
         query.title = {
             $regex: req.query.search,
@@ -249,36 +292,99 @@ app.get("/transaction", isLoggedIn, async (req, res) => {
     })
 })
 
-app.get("/transaction/add",(req,res)=>{
-    res.render("add-transaction")
+app.get("/transaction/add", isLoggedIn, (req, res) => {
+    res.render("add-transaction", { error: null, old: null })
 })
 app.post("/transaction/add", isLoggedIn, async (req, res) => {
-    const newexpense = await Expenses.create({...req.body, user : req.session.userId})
-    res.redirect("/transaction")
-})
-app.get("/transaction/edit/:id", isLoggedIn, async (req, res) => {
-    const id = req.params.id
-    const transaction = await Expenses.findById(id)
-    res.render("edit-transaction", { transaction })
-})
-app.post("/transaction/edit/:id", isLoggedIn, async (req, res) => {
-    const id = req.params.id
-    await Expenses.findByIdAndUpdate(id, req.body)
-    res.redirect("/transaction")
-})
-app.post("/transaction/delete/:id", isLoggedIn, async (req, res) => {
-    const id = req.params.id
-    const transaction = await Expenses.findByIdAndDelete(id)
-    if (!transaction) {
-        return res.redirect("/transaction")
+    const { title, amount, category, type, date, paymentMethod } = req.body;
+
+    if (!title || !amount || !category || !type || !date || !paymentMethod) {
+        return res.render("add-transaction", {
+            error: "All fields are required.",
+            old: req.body
+        });
     }
-    res.redirect("/transaction")
-})
+
+    await Expenses.create({ ...req.body, user: req.session.userId });
+    res.redirect("/transaction");
+});
+app.get("/transaction/edit/:id", isLoggedIn, async (req, res) => {
+    const transaction = await Expenses.findOne({
+        _id: req.params.id,
+        user: req.session.userId
+    });
+    if (!transaction) return res.redirect("/transaction");
+    res.render("edit-transaction", { transaction });
+});
+
+app.post("/transaction/edit/:id", isLoggedIn, async (req, res) => {
+    await Expenses.findOneAndUpdate(
+        { _id: req.params.id, user: req.session.userId },
+        req.body
+    );
+    res.redirect("/transaction");
+});
+
+app.post("/transaction/delete/:id", isLoggedIn, async (req, res) => {
+    await Expenses.findOneAndDelete({
+        _id: req.params.id,
+        user: req.session.userId
+    });
+    res.redirect("/transaction");
+});
 
 app.get("/home", isLoggedIn, async (req, res) => {
     const user = await User.findById(req.session.userId);
     const transaction = await Expenses.find({
         user: req.session.userId
+    });
+
+    const now = new Date();
+    const thisMonth = transaction.filter(t => {
+    const d = new Date(t.date);
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  });
+    const income = transaction.filter(val => val.type === "income");
+    const totalIncome = income.reduce((sum, val) => sum + val.amount, 0);
+
+    const expense = transaction.filter(val => val.type === "expense");
+    const totalExpense = expense.reduce((sum, val) => sum + val.amount, 0);
+    const monthlyBudget = totalIncome 
+    const remainingBudget = monthlyBudget - totalExpense
+    const netSaving = totalIncome - totalExpense;
+    const budgetUsedPct   = monthlyBudget > 0 
+    ? Math.round((totalExpense / monthlyBudget) * 100) 
+    : 0;
+
+    const recentTransactions = await Expenses.find({
+        user: req.session.userId
+    })
+    .sort({ date: -1 })
+    .limit(5);
+
+    res.render("home", {
+        user,
+        totalIncome,
+        totalExpense,
+        netSaving,
+        remainingBudget,
+        monthlyBudget,
+        recentTransactions: [...transaction]
+      .sort((a,b) => new Date(b.date) - new Date(a.date))
+      .slice(0, 5),
+        budgetUsedPct
+    });
+
+});
+app.get("/dashboard", isLoggedIn, async (req, res) => {
+    const user = await User.findById(req.session.userId);
+    const transaction = await Expenses.find({
+        user: req.session.userId
+    });
+    const now = new Date();
+    const thisMonth = transaction.filter(t => {
+    const d = new Date(t.date);
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
     });
     const income = transaction.filter(val => val.type === "income");
     const totalIncome = income.reduce((sum, val) => sum + val.amount, 0);
@@ -294,36 +400,36 @@ app.get("/home", isLoggedIn, async (req, res) => {
     })
     .sort({ date: -1 })
     .limit(5);
+    const budgetUsedPct   = monthlyBudget > 0   // 👈 this was missing
+    ? Math.round((totalExpense / monthlyBudget) * 100)
+    : 0;
 
-    res.render("home", {
-        user,
-        totalIncome,
-        totalExpense,
-        netSaving,
-        remainingBudget,
-        monthlyBudget,
-        recentTransactions,
-    });
+    res.render('dashboard', {
+    user,
+    totalIncome,
+    totalExpense,
+    remainingBudget,
+    monthlyBudget,
+    budgetUsedPct,
+    recentTransactions: [...transaction].sort((a,b) => new Date(b.date)-new Date(a.date)).slice(0,6),
+    topExpenses: [...transaction].filter(t=>t.type==='expense').sort((a,b)=>b.amount-a.amount).slice(0,5),
+    categoryBreakdown: getCategoryBreakdown(thisMonth),  
+    weeklyData:  getWeeklyData(transaction),            
+    monthlyData: getMonthlyData(transaction),            
+    weeklyIncome:  [0,0,0,0,0,0,0],
+    monthlyIncome: Array(12).fill(0), 
+});
+
 
 });
-app.get("/dashboard", async (req, res) => {
 
-    if (!req.session.userId) {
-        return res.redirect("/login");
-    }
-
+app.get("/profile", isLoggedIn, async (req, res) => {
     const user = await User.findById(req.session.userId);
 
-    res.render("dashboard", {
+    res.render("profile", {
         user
     });
-
-});
-
-app.post("/dashboard", async (req,res)=>{
-
-})
-app.get("/profile", isLoggedIn, (req, res) => { })
+ })
 app.get("/logout", isLoggedIn, (req, res) => {
     req.session.destroy((err) => {
 
@@ -335,6 +441,8 @@ app.get("/logout", isLoggedIn, (req, res) => {
 
     });
 })
+
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

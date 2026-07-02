@@ -1,304 +1,279 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flow — Add Transaction</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@700;800&display=swap"
-        rel="stylesheet">
-    <style>
-        :root {
-            --bg: #0e0f11;
-            --surface: #16181c;
-            --surface-2: #1e2026;
-            --border: rgba(255, 255, 255, .07);
-            --text: #f0f0ee;
-            --muted: #7a7c82;
-            --accent: #7c6ef5;
-            --green: #3ecf8e;
-            --red: #f26c6c;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flo — Add Transaction</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box
-        }
+    :root {
+      --bg: #0e0f11; --surface: #16181c; --surface-2: #1e2026;
+      --border: rgba(255,255,255,.07); --border-hover: rgba(255,255,255,.14);
+      --border-focus: rgba(124,110,245,.6);
+      --text: #f0f0ee; --muted: #7a7c82;
+      --accent: #7c6ef5; --accent-glow: rgba(124,110,245,.15);
+      --green: #3ecf8e; --green-glow: rgba(62,207,142,.12);
+      --red: #f26c6c; --red-glow: rgba(242,108,108,.12);
+      --radius: 14px;
+    }
 
-        body {
-            font-family: Inter, sans-serif;
-            background: var(--bg);
-            color: var(--text)
-        }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.2rem 2rem;
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            background: #0e0f11
-        }
+    /* NAV */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 2rem; border-bottom: 1px solid var(--border);
+      position: sticky; top: 0;
+      background: rgba(14,15,17,.88); backdrop-filter: blur(14px); z-index: 100;
+    }
+    .logo { font-family: 'Syne', sans-serif; font-size: 1.35rem; font-weight: 800; letter-spacing: -.5px; text-decoration: none; color: var(--text); }
+    .logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: .25rem; list-style: none; }
+    .nav-links a { text-decoration: none; color: var(--muted); font-size: .875rem; font-weight: 500; padding: .45rem .85rem; border-radius: 8px; transition: .15s; }
+    .nav-links a:hover { color: var(--text); background: var(--surface); }
+    .nav-links a.active { color: var(--text); background: var(--surface-2); }
+    .btn { font-size: .875rem; font-weight: 500; padding: .5rem 1.1rem; border-radius: 8px; border: none; cursor: pointer; text-decoration: none; transition: .15s; font-family: 'Inter', sans-serif; display: inline-flex; align-items: center; gap: .4rem; }
+    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+    .btn-ghost:hover { color: var(--text); border-color: var(--border-hover); background: var(--surface); }
+    @media (max-width: 720px) { .nav-links { display: none; } }
 
-        .logo {
-            font-family: Syne, sans-serif;
-            font-size: 1.4rem;
-            font-weight: 800
-        }
+    /* PAGE */
+    .page { max-width: 680px; margin: 0 auto; padding: 2.5rem 2rem; }
 
-        .logo span {
-            color: var(--accent)
-        }
+    .back-link {
+      display: inline-flex; align-items: center; gap: .4rem;
+      font-size: .85rem; color: var(--muted); text-decoration: none;
+      margin-bottom: 1.5rem; transition: .15s;
+    }
+    .back-link:hover { color: var(--text); }
 
-        .nav-links {
-            display: flex;
-            gap: .3rem;
-            list-style: none
-        }
+    .page-header { margin-bottom: 1.75rem; }
+    .page-header h1 { font-family: 'Syne', sans-serif; font-size: 1.75rem; font-weight: 800; letter-spacing: -.5px; margin-bottom: .3rem; }
+    .page-header p { font-size: .875rem; color: var(--muted); }
 
-        .nav-links a {
-            text-decoration: none;
-            color: var(--muted);
-            padding: .45rem .9rem;
-            border-radius: 8px
-        }
+    /* ALERT */
+    .alert { padding: .75rem 1rem; border-radius: 9px; font-size: .83rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: .5rem; }
+    .alert-error { background: rgba(242,108,108,.1); border: 1px solid rgba(242,108,108,.25); color: #f89898; }
 
-        .nav-links .active,
-        .nav-links a:hover {
-            background: var(--surface);
-            color: #fff
-        }
+    /* CARD */
+    .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem; }
 
-        .container {
-            max-width: 760px;
-            margin: 40px auto;
-            padding: 0 20px
-        }
+    /* TYPE TOGGLE */
+    .type-toggle {
+      display: flex; gap: .5rem; margin-bottom: 1.5rem;
+      background: var(--surface-2); padding: .3rem; border-radius: 10px; border: 1px solid var(--border);
+    }
+    .type-toggle input { display: none; }
+    .type-toggle label {
+      flex: 1; text-align: center; padding: .7rem; border-radius: 8px;
+      font-size: .9rem; font-weight: 600; cursor: pointer; color: var(--muted);
+      transition: .15s; display: flex; align-items: center; justify-content: center; gap: .4rem;
+    }
+    #type-expense:checked + label.expense-label { background: var(--red-glow); color: var(--red); }
+    #type-income:checked  + label.income-label  { background: var(--green-glow); color: var(--green); }
 
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 30px
-        }
+    /* DIVIDER */
+    .section-divider {
+      font-size: .72rem; font-weight: 600; color: var(--muted); text-transform: uppercase;
+      letter-spacing: .06em; margin: 1.4rem 0 1rem; padding-bottom: .5rem;
+      border-bottom: 1px solid var(--border);
+    }
 
-        h1 {
-            font-family: Syne, sans-serif;
-            margin-bottom: 8px
-        }
+    /* FIELDS */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+    @media (max-width: 560px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
 
-        p {
-            color: var(--muted);
-            margin-bottom: 24px
-        }
+    .field { margin-bottom: 1rem; }
+    .field:last-child { margin-bottom: 0; }
+    .field label {
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: .8rem; font-weight: 500; color: var(--muted); margin-bottom: .45rem;
+    }
+    .field label .optional { font-weight: 400; font-size: .72rem; }
 
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px
-        }
+    .input-wrap { position: relative; }
+    .input-icon { position: absolute; left: .9rem; top: 50%; transform: translateY(-50%); font-size: .9rem; opacity: .5; pointer-events: none; }
+    .input-prefix { position: absolute; left: .9rem; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: .9rem; font-weight: 600; pointer-events: none; }
 
-        .full {
-            grid-column: 1/-1
-        }
+    .field input, .field select, .field textarea {
+      width: 100%; background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 10px; padding: .75rem 1rem; font-size: .9rem; color: var(--text);
+      outline: none; font-family: 'Inter', sans-serif; transition: .15s;
+    }
+    .field input.has-icon  { padding-left: 2.5rem; }
+    .field input.has-prefix { padding-left: 1.8rem; }
+    .field input::placeholder, .field textarea::placeholder { color: var(--muted); }
+    .field input:hover, .field select:hover, .field textarea:hover { border-color: var(--border-hover); }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      border-color: var(--border-focus); box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    .field textarea { resize: vertical; min-height: 90px; }
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: .9rem
-        }
+    /* PAYMENT METHOD PILLS */
+    .pay-pills { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .pay-pills input { display: none; }
+    .pay-pill {
+      display: inline-flex; align-items: center; gap: .4rem;
+      font-size: .82rem; font-weight: 500; color: var(--muted);
+      background: var(--surface-2); border: 1px solid var(--border);
+      padding: .5rem .9rem; border-radius: 999px; cursor: pointer; transition: .15s;
+    }
+    .pay-pills input:checked + .pay-pill {
+      background: var(--accent-glow); border-color: rgba(124,110,245,.5); color: #a99cf8;
+    }
+    .pay-pill:hover { border-color: var(--border-hover); color: var(--text); }
 
-        input,
-        select,
-        textarea {
-            width: 100%;
-            padding: 14px;
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            background: var(--surface-2);
-            color: #fff;
-            font: inherit
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 110px
-        }
-
-        .toggle {
-            display: flex;
-            gap: 12px
-        }
-
-        .toggle label {
-            flex: 1
-        }
-
-        .toggle input {
-            display: none
-        }
-
-        .pill {
-            display: block;
-            text-align: center;
-            padding: 14px;
-            border-radius: 10px;
-            background: var(--surface-2);
-            border: 1px solid var(--border);
-            cursor: pointer
-        }
-
-        input:checked+.pill.expense {
-            border-color: var(--red);
-            color: var(--red)
-        }
-
-        input:checked+.pill.income {
-            border-color: var(--green);
-            color: var(--green)
-        }
-
-        .actions {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 28px
-        }
-
-        .btn {
-            text-decoration: none;
-            padding: 14px 22px;
-            border-radius: 10px;
-            font-weight: 600
-        }
-
-        .back {
-            background: var(--surface-2);
-            color: #fff
-        }
-
-        .submit {
-            background: var(--accent);
-            color: #fff;
-            border: none;
-            cursor: pointer
-        }
-
-        @media(max-width:700px) {
-            .grid {
-                grid-template-columns: 1fr
-            }
-
-            .actions {
-                flex-direction: column;
-                gap: 12px
-            }
-
-            .actions>* {
-                width: 100%;
-                text-align: center
-            }
-        }
-    </style>
+    /* ACTIONS */
+    .actions { display: flex; gap: .75rem; margin-top: 1.75rem; }
+    .btn-cancel {
+      padding: .85rem 1.4rem; background: var(--surface-2); color: var(--muted);
+      border: 1px solid var(--border); border-radius: 10px; font-size: .9rem; font-weight: 500;
+      text-decoration: none; display: inline-flex; align-items: center; gap: .4rem;
+      transition: .15s; font-family: 'Inter', sans-serif;
+    }
+    .btn-cancel:hover { color: var(--text); border-color: var(--border-hover); }
+    .btn-submit {
+      flex: 1; padding: .85rem; background: var(--accent); color: #fff; border: none;
+      border-radius: 10px; font-size: .9rem; font-weight: 600; cursor: pointer;
+      transition: .15s; font-family: 'Inter', sans-serif;
+    }
+    .btn-submit:hover { background: #6a5ee0; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(124,110,245,.35); }
+    .btn-submit:active { transform: none; }
+  </style>
 </head>
-
 <body>
-    <nav>
-        <div class="logo">fl<span>ow</span></div>
-        <ul class="nav-links">
-            <li><a href="/home">Home</a></li>
-            <li><a href="/dashboard">Dashboard</a></li>
-            <li><a href="/transaction" class="active">Transactions</a></li>
-            <li><a href="/reports">Reports</a></li>
-            <li><a href="/profile">Profile</a></li>
-        </ul>
-    </nav>
 
-    <div class="container">
-        <div class="card">
-            <h1>Add Transaction</h1>
-            <p>Record an expense or income.</p>
+  <nav>
+    <a href="/" class="logo">fl<span>o</span></a>
+    <ul class="nav-links">
+      <li><a href="/home">Home</a></li>
+      <li><a href="/dashboard">Dashboard</a></li>
+      <li><a href="/transaction" class="active">Transactions</a></li>
+      <li><a href="/reports">Reports</a></li>
+      <li><a href="/profile">Profile</a></li>
+    </ul>
+    <a href="/logout" class="btn btn-ghost">Log out</a>
+  </nav>
 
-            <form action="/transaction/add" method="POST">
-                <div class="grid">
+  <div class="page">
 
-                    <div class="full">
-                        <label>Transaction Type</label>
-                        <div class="toggle">
-                            <label><input type="radio" name="type" value="expense" checked><span class="pill expense">💸
-                                    Expense</span></label>
-                            <label><input type="radio" name="type" value="income"><span class="pill income">💰
-                                    Income</span></label>
-                        </div>
-                    </div>
+    <a href="/transaction" class="back-link">← Back to transactions</a>
 
-                    <div>
-                        <label>Title</label>
-                        <input type="text" name="title" placeholder="Netflix Subscription" required>
-                    </div>
-
-                    <div>
-                        <label>Amount (₹)</label>
-                        <input type="number" name="amount" min="1" required>
-                    </div>
-
-                    <div>
-                        <label>Category</label>
-                        <select name="category" required>
-                            <option>Food</option>
-                            <option>Transport</option>
-                            <option>Shopping</option>
-                            <option>Entertainment</option>
-                            <option>Rent</option>
-                            <option>Salary</option>
-                            <option>Freelance</option>
-                            <option>Other</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label>Date</label>
-                        <input type="date" name="date" required>
-                    </div>
-
-                    <div>
-                        <label>Payment Method</label>
-                        <select name="paymentMethod">
-                            <option>UPI</option>
-                            <option>Cash</option>
-                            <option>Debit Card</option>
-                            <option>Credit Card</option>
-                            <option>Bank Transfer</option>
-                        </select>
-                    </div>
-
-                    <div class="full">
-                        <label>Description</label>
-                        <textarea name="description" placeholder="Optional note..."></textarea>
-                    </div>
-
-                </div>
-
-                <div class="actions">
-                    <a href="/transaction" class="btn back">← Back</a>
-                    <button class="btn submit" type="submit">+ Add Transaction</button>
-                </div>
-
-            </form>
-        </div>
+    <div class="page-header">
+      <h1>Add Transaction</h1>
+      <p>Record a new income or expense entry</p>
     </div>
 
-    <script>
-        const d = document.querySelector('input[type=date]');
-        if (!d.value) {
-            const t = new Date();
-            d.value = t.toISOString().split('T')[0];
-        }
-    </script>
-</body>
+    <% if (locals.error) { %>
+      <div class="alert alert-error">⚠️ <%= error %></div>
+    <% } %>
 
+    <div class="form-card">
+      <form action="/transaction/add" method="POST">
+
+        <!-- TYPE TOGGLE -->
+        <div class="type-toggle">
+          <input type="radio" id="type-expense" name="type" value="expense" checked />
+          <label for="type-expense" class="expense-label">💸 Expense</label>
+          <input type="radio" id="type-income" name="type" value="income" />
+          <label for="type-income" class="income-label">💰 Income</label>
+        </div>
+
+        <!-- BASIC INFO -->
+        <div class="section-divider">Basic Info</div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label for="title">Title</label>
+            <div class="input-wrap">
+              <input type="text" id="title" name="title" class="has-icon"
+                placeholder="e.g. Grocery shopping" required autocomplete="off"
+                value="<%= locals.old ? locals.old.title : '' %>" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="amount">Amount</label>
+            <div class="input-wrap">
+              <span class="input-prefix">₹</span>
+              <input type="number" id="amount" name="amount" class="has-prefix"
+                placeholder="0.00" min="1" step="0.01" required
+                value="<%= locals.old ? locals.old.amount : '' %>" />
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="field">
+            <label for="category">Category</label>
+            <select id="category" name="category" required>
+              <option value="" disabled selected>Select</option>
+              <% ['Food','Shopping','Travel','Bills','Entertainment','Education','Health','Salary','Freelance','Fuel','Other'].forEach(cat => { %>
+                <option value="<%= cat %>" <%= locals.old && locals.old.category === cat ? 'selected' : '' %>><%= cat %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="date">Date</label>
+            <input type="date" id="date" name="date" required
+              value="<%= locals.old ? locals.old.date : new Date().toISOString().split('T')[0] %>" />
+          </div>
+
+          <div class="field">
+            <label for="time">Time <span class="optional">(optional)</span></label>
+            <input type="time" id="time" name="time"
+              value="<%= locals.old ? locals.old.time : new Date().toTimeString().slice(0,5) %>" />
+          </div>
+        </div>
+
+        <!-- PAYMENT METHOD -->
+        <div class="section-divider">Payment Method</div>
+
+        <div class="field">
+          <div class="pay-pills">
+            <% [
+              { val: 'UPI',          emoji: '📱' },
+              { val: 'Cash',         emoji: '💵' },
+              { val: 'Debit Card',   emoji: '💳' },
+              { val: 'Credit Card',  emoji: '💳' },
+              { val: 'Bank Transfer',emoji: '🏦' },
+            ].forEach(pm => { %>
+              <input type="radio" name="paymentMethod"
+                id="pm-<%= pm.val.replace(' ','-') %>"
+                value="<%= pm.val %>"
+                <%= (!locals.old && pm.val === 'UPI') || (locals.old && locals.old.paymentMethod === pm.val) ? 'checked' : '' %> />
+              <label for="pm-<%= pm.val.replace(' ','-') %>" class="pay-pill">
+                <%= pm.emoji %> <%= pm.val %>
+              </label>
+            <% }) %>
+          </div>
+        </div>
+
+        <!-- NOTES -->
+        <div class="section-divider">Notes</div>
+
+        <div class="field">
+          <label for="description">Description <span class="optional">(optional)</span></label>
+          <textarea id="description" name="description"
+            placeholder="Add any extra details..."><%= locals.old ? locals.old.description : '' %></textarea>
+        </div>
+
+        <!-- ACTIONS -->
+        <div class="actions">
+          <a href="/transaction" class="btn-cancel">← Cancel</a>
+          <button type="submit" class="btn-submit">+ Add Transaction</button>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+
+</body>
 </html>

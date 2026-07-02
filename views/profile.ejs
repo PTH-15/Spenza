@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flo — Profile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0e0f11; --surface: #16181c; --surface-2: #1e2026;
+      --border: rgba(255,255,255,.07); --border-hover: rgba(255,255,255,.14);
+      --border-focus: rgba(124,110,245,.6);
+      --text: #f0f0ee; --muted: #7a7c82;
+      --accent: #7c6ef5; --accent-glow: rgba(124,110,245,.15);
+      --green: #3ecf8e; --green-glow: rgba(62,207,142,.12);
+      --red: #f26c6c; --red-glow: rgba(242,108,108,.12);
+      --amber: #f5a623; --amber-glow: rgba(245,166,35,.12);
+      --radius: 14px;
+    }
+
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* NAV */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 2rem; border-bottom: 1px solid var(--border);
+      position: sticky; top: 0;
+      background: rgba(14,15,17,.88); backdrop-filter: blur(14px); z-index: 100;
+    }
+    .logo { font-family: 'Syne', sans-serif; font-size: 1.35rem; font-weight: 800; letter-spacing: -.5px; text-decoration: none; color: var(--text); }
+    .logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: .25rem; list-style: none; }
+    .nav-links a { text-decoration: none; color: var(--muted); font-size: .875rem; font-weight: 500; padding: .45rem .85rem; border-radius: 8px; transition: .15s; }
+    .nav-links a:hover { color: var(--text); background: var(--surface); }
+    .nav-links a.active { color: var(--text); background: var(--surface-2); }
+    .btn { font-size: .875rem; font-weight: 500; padding: .5rem 1.1rem; border-radius: 8px; border: none; cursor: pointer; text-decoration: none; transition: .15s; font-family: 'Inter', sans-serif; display: inline-flex; align-items: center; gap: .4rem; }
+    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+    .btn-ghost:hover { color: var(--text); border-color: var(--border-hover); background: var(--surface); }
+    @media (max-width: 720px) { .nav-links { display: none; } }
+
+    /* PAGE */
+    .page { max-width: 960px; margin: 0 auto; padding: 2.5rem 2rem; }
+
+    .page-header { margin-bottom: 2rem; }
+    .page-header h1 { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; letter-spacing: -.5px; margin-bottom: .3rem; }
+    .page-header p { font-size: .875rem; color: var(--muted); }
+
+    /* ALERTS */
+    .alert { padding: .75rem 1rem; border-radius: 9px; font-size: .83rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: .5rem; }
+    .alert-error   { background: rgba(242,108,108,.1); border: 1px solid rgba(242,108,108,.25); color: #f89898; }
+    .alert-success { background: rgba(62,207,142,.1);  border: 1px solid rgba(62,207,142,.25);  color: #6edcae; }
+
+    /* LAYOUT */
+    .profile-grid { display: grid; grid-template-columns: 280px 1fr; gap: 1.25rem; align-items: start; }
+    @media (max-width: 760px) { .profile-grid { grid-template-columns: 1fr; } }
+
+    /* SIDEBAR */
+    .sidebar-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 1.75rem; text-align: center; position: sticky; top: 5rem;
+    }
+
+    .avatar-wrap { position: relative; display: inline-block; margin-bottom: 1.25rem; }
+    .avatar {
+      width: 88px; height: 88px; border-radius: 50%;
+      background: var(--accent-glow); border: 2px solid rgba(124,110,245,.3);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800;
+      color: #a99cf8; margin: 0 auto;
+    }
+    .avatar-ring {
+      position: absolute; inset: -4px; border-radius: 50%;
+      border: 2px solid var(--accent); opacity: .4;
+    }
+
+    .sidebar-name { font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 700; margin-bottom: .25rem; }
+    .sidebar-email { font-size: .8rem; color: var(--muted); margin-bottom: 1.5rem; word-break: break-all; }
+
+    .sidebar-stats { display: flex; flex-direction: column; gap: .6rem; margin-bottom: 1.5rem; }
+    .sidebar-stat {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
+      padding: .65rem 1rem;
+    }
+    .sidebar-stat-label { font-size: .75rem; color: var(--muted); }
+    .sidebar-stat-val { font-family: 'Syne', sans-serif; font-size: .9rem; font-weight: 700; }
+    .sidebar-stat-val.green  { color: var(--green); }
+    .sidebar-stat-val.red    { color: var(--red); }
+    .sidebar-stat-val.purple { color: #a99cf8; }
+
+    .sidebar-joined { font-size: .75rem; color: var(--muted); }
+
+    /* NAV TABS */
+    .tab-nav { display: flex; gap: .3rem; margin-bottom: 1.25rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: .3rem; }
+    .tab-btn {
+      flex: 1; padding: .55rem; border-radius: 7px; border: none;
+      background: transparent; color: var(--muted); font-size: .83rem; font-weight: 600;
+      cursor: pointer; transition: .15s; font-family: 'Inter', sans-serif;
+    }
+    .tab-btn.active { background: var(--surface-2); color: var(--text); }
+
+    /* PANELS */
+    .panel { display: none; }
+    .panel.active { display: block; animation: fadeIn .18s ease; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
+
+    /* CARDS */
+    .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.6rem; margin-bottom: 1.25rem; }
+    .card-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 1.25rem; display: flex; align-items: center; gap: .5rem; }
+    .card-title .badge { font-size: .7rem; font-weight: 500; padding: .2rem .6rem; border-radius: 999px; }
+    .badge-green { background: var(--green-glow); color: var(--green); border: 1px solid rgba(62,207,142,.2); }
+    .badge-amber { background: var(--amber-glow); color: var(--amber); border: 1px solid rgba(245,166,35,.2); }
+
+    /* FIELDS */
+    .field { margin-bottom: 1rem; }
+    .field:last-of-type { margin-bottom: 0; }
+    .field label { display: block; font-size: .8rem; font-weight: 500; color: var(--muted); margin-bottom: .45rem; }
+    .input-wrap { position: relative; }
+    .input-icon { position: absolute; left: .9rem; top: 50%; transform: translateY(-50%); font-size: .9rem; opacity: .45; pointer-events: none; }
+    .field input, .field select {
+      width: 100%; background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 10px; padding: .75rem 1rem .75rem 2.5rem;
+      font-size: .9rem; color: var(--text); outline: none; font-family: 'Inter', sans-serif; transition: .15s;
+    }
+    .field input.no-icon { padding-left: 1rem; }
+    .field input::placeholder { color: var(--muted); }
+    .field input:hover, .field select:hover { border-color: var(--border-hover); }
+    .field input:focus, .field select:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px var(--accent-glow); }
+    .field input:disabled { opacity: .5; cursor: not-allowed; }
+    .field-hint { font-size: .72rem; color: var(--muted); margin-top: .35rem; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 520px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    /* BUDGET DISPLAY */
+    .budget-display {
+      background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
+      padding: 1.1rem 1.25rem; margin-bottom: 1.25rem;
+    }
+    .budget-display-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: .75rem; }
+    .budget-display-label { font-size: .78rem; color: var(--muted); font-weight: 500; }
+    .budget-display-val { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--amber); }
+    .bar-track { height: 8px; background: var(--bg); border-radius: 999px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--amber)); transition: width .6s ease; }
+    .budget-footer { display: flex; justify-content: space-between; margin-top: .6rem; font-size: .72rem; color: var(--muted); }
+
+    /* TOGGLE PASSWORD */
+    .toggle-pw {
+      position: absolute; right: .9rem; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer; color: var(--muted);
+      font-size: .78rem; font-family: 'Inter', sans-serif; transition: .15s; padding: 0;
+    }
+    .toggle-pw:hover { color: var(--text); }
+
+    /* PASSWORD STRENGTH */
+    .pw-strength { margin-top: .5rem; }
+    .strength-bar { height: 3px; border-radius: 999px; background: var(--surface-2); overflow: hidden; margin-bottom: .3rem; }
+    .strength-fill { height: 100%; border-radius: 999px; width: 0; transition: width .3s, background .3s; }
+    .strength-label { font-size: .7rem; color: var(--muted); }
+
+    /* DANGER ZONE */
+    .danger-card {
+      background: var(--surface); border: 1px solid rgba(242,108,108,.2); border-radius: var(--radius);
+      padding: 1.6rem;
+    }
+    .danger-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--red); margin-bottom: .5rem; }
+    .danger-desc { font-size: .83rem; color: var(--muted); line-height: 1.6; margin-bottom: 1.25rem; }
+
+    /* BUTTONS */
+    .btn-submit {
+      padding: .8rem 1.6rem; background: var(--accent); color: #fff; border: none;
+      border-radius: 10px; font-size: .875rem; font-weight: 600; cursor: pointer;
+      transition: .15s; font-family: 'Inter', sans-serif;
+    }
+    .btn-submit:hover { background: #6a5ee0; transform: translateY(-1px); }
+
+    .btn-danger {
+      padding: .8rem 1.4rem; background: transparent; color: var(--red);
+      border: 1px solid rgba(242,108,108,.3); border-radius: 10px;
+      font-size: .875rem; font-weight: 600; cursor: pointer; transition: .15s;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-danger:hover { background: var(--red-glow); border-color: var(--red); }
+
+    /* DELETE MODAL */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.65); backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center; z-index: 1000; padding: 1.5rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .confirm-box {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      width: 100%; max-width: 380px; padding: 1.75rem; text-align: center;
+      animation: popIn .18s ease;
+    }
+    @keyframes popIn { from{ opacity:0; transform:scale(.96); } to{ opacity:1; transform:scale(1); } }
+    .confirm-box .icon { font-size: 2.25rem; margin-bottom: .75rem; }
+    .confirm-box h3 { font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 700; margin-bottom: .5rem; }
+    .confirm-box p { font-size: .83rem; color: var(--muted); line-height: 1.65; margin-bottom: 1.5rem; }
+    .confirm-actions { display: flex; gap: .6rem; }
+    .confirm-cancel { flex: 1; padding: .7rem; background: var(--surface-2); color: var(--text); border: 1px solid var(--border); border-radius: 9px; font-size: .85rem; font-weight: 600; cursor: pointer; transition: .15s; font-family: 'Inter', sans-serif; }
+    .confirm-cancel:hover { border-color: var(--border-hover); }
+    .confirm-delete { flex: 1; padding: .7rem; background: var(--red); color: #fff; border: none; border-radius: 9px; font-size: .85rem; font-weight: 600; cursor: pointer; transition: .15s; font-family: 'Inter', sans-serif; }
+    .confirm-delete:hover { background: #e05656; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="logo">fl<span>o</span></a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/dashboard">Dashboard</a></li>
+      <li><a href="/transaction">Transactions</a></li>
+      <li><a href="/reports">Reports</a></li>
+      <li><a href="/profile" class="active">Profile</a></li>
+    </ul>
+    <a href="/logout" class="btn btn-ghost">Log out</a>
+  </nav>
+
+  <div class="page">
+
+    <div class="page-header">
+      <h1>Profile</h1>
+      <p>Manage your account details, budget and security</p>
+    </div>
+
+    <!-- ALERTS -->
+    <% if (locals.success) { %>
+      <div class="alert alert-success">✓ <%= success %></div>
+    <% } %>
+    <% if (locals.error) { %>
+      <div class="alert alert-error">⚠️ <%= error %></div>
+    <% } %>
+
+    <div class="profile-grid">
+
+      <!-- SIDEBAR -->
+      <div class="sidebar-card">
+        <div class="avatar-wrap">
+          <div class="avatar"><%= user.name.charAt(0).toUpperCase() %></div>
+          <div class="avatar-ring"></div>
+        </div>
+        <div class="sidebar-name"><%= user.name %></div>
+        <div class="sidebar-email"><%= user.email %></div>
+
+        <div class="sidebar-stats">
+          <div class="sidebar-stat">
+            <span class="sidebar-stat-label">Total Income</span>
+            <span class="sidebar-stat-val green">₹<%= (locals.totalIncome || 0).toLocaleString('en-IN') %></span>
+          </div>
+          <div class="sidebar-stat">
+            <span class="sidebar-stat-label">Total Expenses</span>
+            <span class="sidebar-stat-val red">₹<%= (locals.totalExpense || 0).toLocaleString('en-IN') %></span>
+          </div>
+          <div class="sidebar-stat">
+            <span class="sidebar-stat-label">Net Savings</span>
+            <span class="sidebar-stat-val purple">₹<%= ((locals.totalIncome||0) - (locals.totalExpense||0)).toLocaleString('en-IN') %></span>
+          </div>
+          <div class="sidebar-stat">
+            <span class="sidebar-stat-label">Transactions</span>
+            <span class="sidebar-stat-val purple"><%= locals.txCount || 0 %></span>
+          </div>
+        </div>
+
+        <div class="sidebar-joined">
+          Member since <%= new Date(user.createdAt || Date.now()).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }) %>
+        </div>
+      </div>
+
+      <!-- MAIN CONTENT -->
+      <div>
+
+        <!-- TABS -->
+        <div class="tab-nav">
+          <button class="tab-btn active" onclick="switchTab('info',   this)">👤 Profile</button>
+          <button class="tab-btn"        onclick="switchTab('budget', this)">🎯 Budget</button>
+          <button class="tab-btn"        onclick="switchTab('password',this)">🔒 Password</button>
+          <button class="tab-btn"        onclick="switchTab('danger', this)">⚠️ Danger</button>
+        </div>
+
+        <!-- ── TAB 1: PROFILE INFO ── -->
+        <div class="panel active" id="panel-info">
+          <div class="form-card">
+            <div class="card-title">Personal Information <span class="badge badge-green">Editable</span></div>
+            <form action="/profile/update" method="POST">
+              <div class="grid-2">
+                <div class="field">
+                  <label for="name">Full Name</label>
+                  <div class="input-wrap">
+                    <span class="input-icon">👤</span>
+                    <input type="text" id="name" name="name" value="<%= user.name %>" required />
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="email">Email Address</label>
+                  <div class="input-wrap">
+                    <span class="input-icon">✉️</span>
+                    <input type="email" id="email" name="email" value="<%= user.email %>" required />
+                  </div>
+                </div>
+              </div>
+              <div class="grid-2">
+                <div class="field">
+                  <label for="phone">Phone <span style="color:var(--muted); font-weight:400;">(optional)</span></label>
+                  <div class="input-wrap">
+                    <span class="input-icon">📱</span>
+                    <input type="tel" id="phone" name="phone" placeholder="+91 00000 00000" value="<%= user.phone || '' %>" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="currency">Currency</label>
+                  <div class="input-wrap">
+                    <span class="input-icon">💱</span>
+                    <select id="currency" name="currency">
+                      <option value="INR" <%= (user.currency || 'INR') === 'INR' ? 'selected' : '' %>>₹ Indian Rupee (INR)</option>
+                      <option value="USD" <%= user.currency === 'USD' ? 'selected' : '' %>>$ US Dollar (USD)</option>
+                      <option value="EUR" <%= user.currency === 'EUR' ? 'selected' : '' %>>€ Euro (EUR)</option>
+                      <option value="GBP" <%= user.currency === 'GBP' ? 'selected' : '' %>>£ British Pound (GBP)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div style="margin-top:1.25rem;">
+                <button type="submit" class="btn-submit">Save changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- ── TAB 2: BUDGET ── -->
+        <div class="panel" id="panel-budget">
+          <div class="form-card">
+            <div class="card-title">Monthly Budget <span class="badge badge-amber">Active</span></div>
+
+            <!-- Current budget display -->
+            <div class="budget-display">
+              <div class="budget-display-top">
+                <span class="budget-display-label">Current monthly budget</span>
+                <span class="budget-display-val">₹<%= (user.monthlyBudget || 0).toLocaleString('en-IN') %></span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill" id="budgetBarFill" style="width:<%= Math.min(locals.budgetUsedPct || 0, 100) %>%"></div>
+              </div>
+              <div class="budget-footer">
+                <span>₹<%= (locals.totalExpense || 0).toLocaleString('en-IN') %> spent</span>
+                <span><%= locals.budgetUsedPct || 0 %>% used</span>
+                <span>₹<%= (locals.remainingBudget || 0).toLocaleString('en-IN') %> left</span>
+              </div>
+            </div>
+
+            <form action="/profile/budget" method="POST">
+              <div class="field">
+                <label for="monthlyBudget">Set New Monthly Budget</label>
+                <div class="input-wrap">
+                  <span class="input-icon">₹</span>
+                  <input type="number" id="monthlyBudget" name="monthlyBudget"
+                    placeholder="e.g. 30000" min="0" step="100"
+                    value="<%= user.monthlyBudget || '' %>" required />
+                </div>
+                <div class="field-hint">This resets your spending limit for every month.</div>
+              </div>
+              <div style="margin-top:1.25rem;">
+                <button type="submit" class="btn-submit">Update budget</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- ── TAB 3: PASSWORD ── -->
+        <div class="panel" id="panel-password">
+          <div class="form-card">
+            <div class="card-title">Change Password</div>
+            <form action="/profile/change-password" method="POST">
+
+              <div class="field">
+                <label for="currentPassword">Current Password</label>
+                <div class="input-wrap">
+                  <span class="input-icon">🔒</span>
+                  <input type="password" id="currentPassword" name="currentPassword" placeholder="Enter current password" required />
+                  <button type="button" class="toggle-pw" onclick="togglePw('currentPassword', this)">Show</button>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="newPassword">New Password</label>
+                <div class="input-wrap">
+                  <span class="input-icon">🔑</span>
+                  <input type="password" id="newPassword" name="newPassword" placeholder="At least 8 characters" required oninput="checkStrength(this.value)" />
+                  <button type="button" class="toggle-pw" onclick="togglePw('newPassword', this)">Show</button>
+                </div>
+                <div class="pw-strength">
+                  <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+                  <div class="strength-label" id="strengthLabel">Enter a new password</div>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="confirmPassword">Confirm New Password</label>
+                <div class="input-wrap">
+                  <span class="input-icon">🔑</span>
+                  <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Re-enter new password" required />
+                  <button type="button" class="toggle-pw" onclick="togglePw('confirmPassword', this)">Show</button>
+                </div>
+              </div>
+
+              <div style="margin-top:1.25rem;">
+                <button type="submit" class="btn-submit">Update password</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- ── TAB 4: DANGER ZONE ── -->
+        <div class="panel" id="panel-danger">
+          <div class="danger-card">
+            <div class="danger-title">⚠️ Danger Zone</div>
+            <div class="danger-desc">
+              Deleting your account is permanent and cannot be undone. All your transactions,
+              budgets, and profile data will be wiped immediately.
+            </div>
+            <button class="btn-danger" onclick="openDeleteModal()">🗑️ Delete my account</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- DELETE CONFIRM MODAL -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="confirm-box">
+      <div class="icon">🗑️</div>
+      <h3>Delete your account?</h3>
+      <p>This will permanently delete <strong><%= user.name %></strong>'s account and all associated data. There is no going back.</p>
+      <div class="confirm-actions">
+        <button class="confirm-cancel" onclick="closeDeleteModal()">Cancel</button>
+        <form action="/profile/delete" method="POST" style="flex:1;">
+          <button type="submit" class="confirm-delete" style="width:100%;">Yes, delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── TABS ──
+    function switchTab(id, btn) {
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('panel-' + id).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    // ── PASSWORD VISIBILITY ──
+    function togglePw(id, btn) {
+      const input = document.getElementById(id);
+      input.type = input.type === 'password' ? 'text' : 'password';
+      btn.textContent = input.type === 'password' ? 'Show' : 'Hide';
+    }
+
+    // ── PASSWORD STRENGTH ──
+    function checkStrength(val) {
+      const fill  = document.getElementById('strengthFill');
+      const label = document.getElementById('strengthLabel');
+      let score = 0;
+      if (val.length >= 8)          score++;
+      if (/[A-Z]/.test(val))        score++;
+      if (/[0-9]/.test(val))        score++;
+      if (/[^A-Za-z0-9]/.test(val)) score++;
+      const levels = [
+        { pct:'0%',   color:'transparent', text:'Enter a password' },
+        { pct:'25%',  color:'#f26c6c',     text:'Weak' },
+        { pct:'50%',  color:'#f5a623',     text:'Fair' },
+        { pct:'75%',  color:'#7c6ef5',     text:'Good' },
+        { pct:'100%', color:'#3ecf8e',     text:'Strong 💪' },
+      ];
+      const lvl = val.length === 0 ? levels[0] : levels[score] || levels[4];
+      fill.style.width      = lvl.pct;
+      fill.style.background = lvl.color;
+      label.textContent     = lvl.text;
+    }
+
+    // ── DELETE MODAL ──
+    const deleteModal = document.getElementById('deleteModal');
+    function openDeleteModal()  { deleteModal.classList.add('open');    document.body.style.overflow = 'hidden'; }
+    function closeDeleteModal() { deleteModal.classList.remove('open'); document.body.style.overflow = ''; }
+    deleteModal.addEventListener('click', e => { if (e.target === deleteModal) closeDeleteModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDeleteModal(); });
+
+    // ── AUTO-SWITCH TAB on error/success ──
+    <% if (locals.activeTab) { %>
+      document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.querySelector(`[onclick*="switchTab('<%= activeTab %>'"]`);
+        if (btn) btn.click();
+      });
+    <% } %>
+  </script>
+
+</body>
+</html>
