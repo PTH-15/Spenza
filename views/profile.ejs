@@ -312,18 +312,18 @@
                     <input type="tel" id="phone" name="phone" placeholder="+91 00000 00000" value="<%= user.phone || '' %>" />
                   </div>
                 </div>
-                <div class="field">
-                  <label for="currency">Currency</label>
+                <!-- <div class="field">
+                  <label for="Gender">Gender</label>
                   <div class="input-wrap">
                     <span class="input-icon">💱</span>
-                    <select id="currency" name="currency">
-                      <option value="INR" <%= (user.currency || 'INR') === 'INR' ? 'selected' : '' %>>₹ Indian Rupee (INR)</option>
-                      <option value="USD" <%= user.currency === 'USD' ? 'selected' : '' %>>$ US Dollar (USD)</option>
-                      <option value="EUR" <%= user.currency === 'EUR' ? 'selected' : '' %>>€ Euro (EUR)</option>
-                      <option value="GBP" <%= user.currency === 'GBP' ? 'selected' : '' %>>£ British Pound (GBP)</option>
+                    <select id="Gender" name="Gender">
+                      <option value="INR" <%= (user.Gender || 'select') === '' ? 'selected' : '' %>Select Gender</option>
+                      <option value="USD" <%= user.Gender === 'Male' ? 'selected' : '' %>Male</option>
+                      <option value="EUR" <%= user.Gender === 'Female' ? 'selected' : '' %>Female</option>
+                      <option value="GBP" <%= user.Gender === 'Other' ? 'selected' : '' %>other</option>
                     </select>
                   </div>
-                </div>
+                </div> -->
               </div>
               <div style="margin-top:1.25rem;">
                 <button type="submit" class="btn-submit">Save changes</button>
