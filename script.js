@@ -227,6 +227,9 @@ app.get("/transaction", isLoggedIn, async (req, res) => {
     if (req.query.sort === "amount-low") {
         transaction = transaction.sort({ amount: 1 });
     }
+    if (req.query.paymentMethod) {
+    query.paymentMethod = req.query.paymentMethod;
+    }
     transaction = await transaction
     const income = transaction.filter(val => val.type === "income")
     const totalIncome = income.reduce((sum, val) => { return sum + val.amount }, 0)
@@ -240,9 +243,14 @@ app.get("/transaction", isLoggedIn, async (req, res) => {
         sortVal: req.query.sort,
         searchVal: req.query.search,
         totalIncome,
-        totalExpense
+        totalExpense,
+        paymentMethodVal: req.query.paymentMethod
 
     })
+})
+
+app.get("/transaction/add",(req,res)=>{
+    res.render("add-transaction")
 })
 app.post("/transaction/add", isLoggedIn, async (req, res) => {
     const newexpense = await Expenses.create({...req.body, user : req.session.userId})
@@ -298,7 +306,23 @@ app.get("/home", isLoggedIn, async (req, res) => {
     });
 
 });
+app.get("/dashboard", async (req, res) => {
 
+    if (!req.session.userId) {
+        return res.redirect("/login");
+    }
+
+    const user = await User.findById(req.session.userId);
+
+    res.render("dashboard", {
+        user
+    });
+
+});
+
+app.post("/dashboard", async (req,res)=>{
+
+})
 app.get("/profile", isLoggedIn, (req, res) => { })
 app.get("/logout", isLoggedIn, (req, res) => {
     req.session.destroy((err) => {

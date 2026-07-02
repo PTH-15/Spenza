@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flow — Add Transaction</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0e0f11;
+            --surface: #16181c;
+            --surface-2: #1e2026;
+            --border: rgba(255, 255, 255, .07);
+            --text: #f0f0ee;
+            --muted: #7a7c82;
+            --accent: #7c6ef5;
+            --green: #3ecf8e;
+            --red: #f26c6c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: Inter, sans-serif;
+            background: var(--bg);
+            color: var(--text)
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 2rem;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: #0e0f11
+        }
+
+        .logo {
+            font-family: Syne, sans-serif;
+            font-size: 1.4rem;
+            font-weight: 800
+        }
+
+        .logo span {
+            color: var(--accent)
+        }
+
+        .nav-links {
+            display: flex;
+            gap: .3rem;
+            list-style: none
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--muted);
+            padding: .45rem .9rem;
+            border-radius: 8px
+        }
+
+        .nav-links .active,
+        .nav-links a:hover {
+            background: var(--surface);
+            color: #fff
+        }
+
+        .container {
+            max-width: 760px;
+            margin: 40px auto;
+            padding: 0 20px
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px
+        }
+
+        h1 {
+            font-family: Syne, sans-serif;
+            margin-bottom: 8px
+        }
+
+        p {
+            color: var(--muted);
+            margin-bottom: 24px
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px
+        }
+
+        .full {
+            grid-column: 1/-1
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: .9rem
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--surface-2);
+            color: #fff;
+            font: inherit
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 110px
+        }
+
+        .toggle {
+            display: flex;
+            gap: 12px
+        }
+
+        .toggle label {
+            flex: 1
+        }
+
+        .toggle input {
+            display: none
+        }
+
+        .pill {
+            display: block;
+            text-align: center;
+            padding: 14px;
+            border-radius: 10px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            cursor: pointer
+        }
+
+        input:checked+.pill.expense {
+            border-color: var(--red);
+            color: var(--red)
+        }
+
+        input:checked+.pill.income {
+            border-color: var(--green);
+            color: var(--green)
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 28px
+        }
+
+        .btn {
+            text-decoration: none;
+            padding: 14px 22px;
+            border-radius: 10px;
+            font-weight: 600
+        }
+
+        .back {
+            background: var(--surface-2);
+            color: #fff
+        }
+
+        .submit {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            cursor: pointer
+        }
+
+        @media(max-width:700px) {
+            .grid {
+                grid-template-columns: 1fr
+            }
+
+            .actions {
+                flex-direction: column;
+                gap: 12px
+            }
+
+            .actions>* {
+                width: 100%;
+                text-align: center
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="logo">fl<span>ow</span></div>
+        <ul class="nav-links">
+            <li><a href="/home">Home</a></li>
+            <li><a href="/dashboard">Dashboard</a></li>
+            <li><a href="/transaction" class="active">Transactions</a></li>
+            <li><a href="/reports">Reports</a></li>
+            <li><a href="/profile">Profile</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <h1>Add Transaction</h1>
+            <p>Record an expense or income.</p>
+
+            <form action="/transaction/add" method="POST">
+                <div class="grid">
+
+                    <div class="full">
+                        <label>Transaction Type</label>
+                        <div class="toggle">
+                            <label><input type="radio" name="type" value="expense" checked><span class="pill expense">💸
+                                    Expense</span></label>
+                            <label><input type="radio" name="type" value="income"><span class="pill income">💰
+                                    Income</span></label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label>Title</label>
+                        <input type="text" name="title" placeholder="Netflix Subscription" required>
+                    </div>
+
+                    <div>
+                        <label>Amount (₹)</label>
+                        <input type="number" name="amount" min="1" required>
+                    </div>
+
+                    <div>
+                        <label>Category</label>
+                        <select name="category" required>
+                            <option>Food</option>
+                            <option>Transport</option>
+                            <option>Shopping</option>
+                            <option>Entertainment</option>
+                            <option>Rent</option>
+                            <option>Salary</option>
+                            <option>Freelance</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Date</label>
+                        <input type="date" name="date" required>
+                    </div>
+
+                    <div>
+                        <label>Payment Method</label>
+                        <select name="paymentMethod">
+                            <option>UPI</option>
+                            <option>Cash</option>
+                            <option>Debit Card</option>
+                            <option>Credit Card</option>
+                            <option>Bank Transfer</option>
+                        </select>
+                    </div>
+
+                    <div class="full">
+                        <label>Description</label>
+                        <textarea name="description" placeholder="Optional note..."></textarea>
+                    </div>
+
+                </div>
+
+                <div class="actions">
+                    <a href="/transaction" class="btn back">← Back</a>
+                    <button class="btn submit" type="submit">+ Add Transaction</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const d = document.querySelector('input[type=date]');
+        if (!d.value) {
+            const t = new Date();
+            d.value = t.toISOString().split('T')[0];
+        }
+    </script>
+</body>
+
+</html>
