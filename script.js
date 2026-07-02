@@ -274,7 +274,8 @@ app.get("/home", isLoggedIn, async (req, res) => {
 
     const expense = transaction.filter(val => val.type === "expense");
     const totalExpense = expense.reduce((sum, val) => sum + val.amount, 0);
-
+    const monthlyBudget = totalIncome 
+    const remainingBudget = monthlyBudget - totalExpense
     const netSaving = totalIncome - totalExpense;
 
     const recentTransactions = await Expenses.find({
@@ -288,8 +289,9 @@ app.get("/home", isLoggedIn, async (req, res) => {
         totalIncome,
         totalExpense,
         netSaving,
+        remainingBudget,
+        monthlyBudget,
         recentTransactions,
-        categoryEmoji
     });
 
 });
