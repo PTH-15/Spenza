@@ -759,8 +759,7 @@
                         </span>
                     </div>
                     <div class="bar-track">
-                        <div class="bar-fill" 
-                        style=`width: <%= Math.min(locals.budgetUsedPct || 0, 100) %>%;`  ></div>
+                        <div class="bar-fill" style=`width: <%=Math.min(locals.budgetUsedPct || 0, 100) %>%;` ></div>
                     </div>
                     <div class="budget-bar-footer">
                         <span>₹<%= (locals.totalExpense || 0).toLocaleString('en-IN') %> spent</span>
@@ -783,8 +782,7 @@
                         <% if (locals.recentTransactions && recentTransactions.length> 0) { %>
                             <% recentTransactions.forEach(tx=> { %>
                                 <div class="tx-item">
-                                    <div
-                                        class="tx-icon style=background: <%= tx.type === 'income' 
+                                    <div class="tx-icon style=background: <%= tx.type === 'income' 
                                         ? 'rgba(62,207,142,0.12)' 
                                         : 'rgba(242,108,108,0.12)' %>;">
                                         <%= tx.type==='income' ? %>
