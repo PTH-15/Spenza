@@ -667,9 +667,9 @@
         <div class="logo">fl<span>o</span></div>
         <% if (locals.user) { %>
             <ul class="nav-links">
-                <li><a href="/" class="active">Home</a></li>
+                <li><a href="/home" class="active">Home</a></li>
                 <li><a href="/dashboard">Dashboard</a></li>
-                <li><a href="/transactions">Transactions</a></li>
+                <li><a href="/transaction">Transactions</a></li>
                 <li><a href="/reports">Reports</a></li>
                 <li><a href="/profile">Profile</a></li>
             </ul>
@@ -713,7 +713,7 @@
         <p>Here' s your financial snapshot for <strong>
                                     <%= new Date().toLocaleString('default', { month: 'long' }) %></strong></p>
                     </div>
-                    <a href="/transactions/add" class="btn btn-primary">+ Add expense</a>
+                    <a href="/transaction/add" class="btn btn-primary">+ Add expense</a>
                 </div>
             </div>
 
@@ -760,7 +760,7 @@
                     </div>
                     <div class="bar-track">
                         <div class="bar-fill" 
-                        style=`width: <%= Math.min(locals.budgetUsedPct || 0, 100) %>%;`></div>
+                        style=`width: <%= Math.min(locals.budgetUsedPct || 0, 100) %>%;`  ></div>
                     </div>
                     <div class="budget-bar-footer">
                         <span>₹<%= (locals.totalExpense || 0).toLocaleString('en-IN') %> spent</span>
@@ -776,7 +776,7 @@
                 <div>
                     <div class="section-header">
                         <h2 class="section-title">Recent expenses</h2>
-                        <a href="/transactions" class="see-all">View all →</a>
+                        <a href="/transaction" class="see-all">View all →</a>
                     </div>
 
                     <div class="transactions-list">
@@ -784,7 +784,9 @@
                             <% recentTransactions.forEach(tx=> { %>
                                 <div class="tx-item">
                                     <div
-                                        class="tx-icon style=background: <%= tx.type === 'income' ? 'rgba(62,207,142,0.12)' : 'rgba(242,108,108,0.12)' %>">
+                                        class="tx-icon style=background: <%= tx.type === 'income' 
+                                        ? 'rgba(62,207,142,0.12)' 
+                                        : 'rgba(242,108,108,0.12)' %>;">
                                         <%= tx.type==='income' ? '💰' : categoryEmoji(tx.category) %>
                                     </div>
                                     <div class="tx-info">
@@ -810,7 +812,7 @@
                                     <% } else { %>
                                         <div
                                             style="padding: 2.5rem; text-align: center; color: var(--muted); font-size: 0.875rem;">
-                                            No transactions yet — <a href="/transactions/add"
+                                            No transactions yet — <a href="/transaction/add"
                                                 style="color: var(--accent);">add your first one</a>
                                         </div>
                                         <% } %>
@@ -824,12 +826,12 @@
                     </div>
                     <div class="quick-card">
                         <div class="quick-actions">
-                            <a href="/transactions/add" class="quick-btn">
+                            <a href="/transaction/add" class="quick-btn">
                                 <span class="icon purple">➕</span>
                                 Add expense
                                 <span class="arrow">›</span>
                             </a>
-                            <a href="/transactions/add?type=income" class="quick-btn">
+                            <a href="/transaction/add?type=income" class="quick-btn">
                                 <span class="icon green">💰</span>
                                 Log income
                                 <span class="arrow">›</span>
@@ -857,7 +859,7 @@
 
             <!-- FAB -->
             <div class="fab-wrap">
-                <a href="/transactions/add" class="fab">+ Quick add</a>
+                <a href="/transaction/add" class="fab">+ Quick add</a>
             </div>
 
             <% } %>

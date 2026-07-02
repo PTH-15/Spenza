@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flo — Forgot Password</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0e0f11;
+      --surface: #16181c;
+      --surface-2: #1e2026;
+      --border: rgba(255,255,255,.07);
+      --border-hover: rgba(255,255,255,.14);
+      --border-focus: rgba(124,110,245,.6);
+      --text: #f0f0ee;
+      --muted: #7a7c82;
+      --accent: #7c6ef5;
+      --accent-glow: rgba(124,110,245,.15);
+      --green: #3ecf8e;
+      --red: #f26c6c;
+      --radius: 14px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* NAV */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 2rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(14,15,17,.88);
+      backdrop-filter: blur(14px);
+    }
+    .logo { font-family: 'Syne', sans-serif; font-size: 1.35rem; font-weight: 800; letter-spacing: -.5px; text-decoration: none; color: var(--text); }
+    .logo span { color: var(--accent); }
+    .nav-right { display: flex; gap: .6rem; }
+    .btn { font-size: .875rem; font-weight: 500; padding: .5rem 1.1rem; border-radius: 8px; border: none; cursor: pointer; text-decoration: none; transition: .15s; font-family: 'Inter', sans-serif; }
+    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+    .btn-ghost:hover { color: var(--text); border-color: var(--border-hover); background: var(--surface); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: #6a5ee0; transform: translateY(-1px); }
+
+    /* MAIN */
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .container { width: 100%; max-width: 420px; }
+
+    /* STEP INDICATOR */
+    .steps {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin-bottom: 2rem;
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .4rem;
+      position: relative;
+    }
+
+    .step-circle {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: var(--surface);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .75rem; font-weight: 700;
+      color: var(--muted);
+      transition: .25s;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step.active .step-circle {
+      border-color: var(--accent);
+      background: var(--accent-glow);
+      color: #a99cf8;
+    }
+
+    .step.done .step-circle {
+      border-color: var(--green);
+      background: rgba(62,207,142,.12);
+      color: var(--green);
+      font-size: .9rem;
+    }
+
+    .step-label {
+      font-size: .7rem;
+      color: var(--muted);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .step.active .step-label { color: var(--text); }
+    .step.done .step-label { color: var(--green); }
+
+    .step-line {
+      width: 60px; height: 2px;
+      background: var(--border);
+      margin: 0 .5rem;
+      margin-bottom: 1.35rem;
+      flex-shrink: 0;
+      transition: .25s;
+    }
+
+    .step-line.done { background: var(--green); }
+
+    /* CARD */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    /* PANELS - only one visible at a time */
+    .panel { display: none; padding: 2rem; }
+    .panel.active { display: block; animation: fadeIn .2s ease; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+    .panel-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .panel-icon.purple { background: var(--accent-glow); border: 1px solid rgba(124,110,245,.2); }
+    .panel-icon.amber  { background: rgba(245,166,35,.12); border: 1px solid rgba(245,166,35,.25); }
+    .panel-icon.green  { background: rgba(62,207,142,.12); border: 1px solid rgba(62,207,142,.25); }
+
+    .panel h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.4rem; font-weight: 800; letter-spacing: -.4px;
+      margin-bottom: .4rem;
+    }
+
+    .panel p { font-size: .875rem; color: var(--muted); line-height: 1.65; margin-bottom: 1.5rem; }
+    .panel p strong { color: var(--text); }
+
+    /* Alert */
+    .alert {
+      padding: .75rem 1rem; border-radius: 9px; font-size: .83rem;
+      margin-bottom: 1.1rem; display: flex; align-items: center; gap: .5rem;
+    }
+    .alert-error { background: rgba(242,108,108,.1); border: 1px solid rgba(242,108,108,.25); color: #f89898; }
+    .alert-success { background: rgba(62,207,142,.1); border: 1px solid rgba(62,207,142,.25); color: #6edcae; }
+
+    /* Field */
+    .field { margin-bottom: 1rem; }
+    .field label { display: block; font-size: .8rem; font-weight: 500; color: var(--muted); margin-bottom: .45rem; }
+    .input-wrap { position: relative; }
+    .input-wrap .input-icon { position: absolute; left: .9rem; top: 50%; transform: translateY(-50%); font-size: .9rem; opacity: .5; pointer-events: none; }
+    .field input {
+      width: 100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
+      padding: .75rem 1rem .75rem 2.6rem;
+      font-size: .9rem; color: var(--text); outline: none; font-family: 'Inter', sans-serif;
+      transition: .15s;
+    }
+    .field input::placeholder { color: var(--muted); }
+    .field input:hover { border-color: var(--border-hover); }
+    .field input:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px var(--accent-glow); }
+
+    /* OTP boxes */
+    .otp-row {
+      display: flex; gap: .6rem; justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+    .otp-box {
+      width: 52px; height: 58px;
+      background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
+      text-align: center; font-size: 1.4rem; font-weight: 700; font-family: 'Syne', sans-serif;
+      color: var(--text); outline: none; transition: .15s; caret-color: var(--accent);
+    }
+    .otp-box:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px var(--accent-glow); }
+    .otp-box.filled { border-color: rgba(124,110,245,.4); }
+
+    .resend-row {
+      text-align: center; font-size: .82rem; color: var(--muted); margin-bottom: 1.25rem;
+    }
+    .resend-row a { color: var(--accent); text-decoration: none; font-weight: 500; }
+    .resend-row a:hover { text-decoration: underline; }
+    .timer { font-weight: 600; color: var(--text); }
+
+    /* Password strength */
+    .pw-strength { margin-top: .5rem; }
+    .strength-bar {
+      height: 4px; border-radius: 999px; background: var(--surface-2);
+      overflow: hidden; margin-bottom: .35rem;
+    }
+    .strength-fill { height: 100%; border-radius: 999px; width: 0; transition: width .3s, background .3s; }
+    .strength-label { font-size: .72rem; color: var(--muted); }
+
+    .toggle-pw {
+      position: absolute; right: .9rem; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer; color: var(--muted); font-size: .8rem;
+      font-family: 'Inter', sans-serif; transition: .15s;
+    }
+    .toggle-pw:hover { color: var(--text); }
+
+    /* Submit button */
+    .btn-submit {
+      width: 100%; padding: .85rem; background: var(--accent); color: #fff;
+      border: none; border-radius: 10px; font-size: .9rem; font-weight: 600;
+      cursor: pointer; transition: .15s; font-family: 'Inter', sans-serif;
+    }
+    .btn-submit:hover { background: #6a5ee0; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(124,110,245,.35); }
+
+    /* Success checkmark animation */
+    .success-anim {
+      width: 70px; height: 70px;
+      border-radius: 50%;
+      background: rgba(62,207,142,.12);
+      border: 2px solid rgba(62,207,142,.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 1.5rem;
+      animation: popIn .4s ease;
+    }
+    @keyframes popIn {
+      0% { transform: scale(0); opacity:0; }
+      70% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity:1; }
+    }
+
+    /* Back link */
+    .back-row {
+      text-align: center; margin-top: 1.25rem;
+      font-size: .83rem; color: var(--muted);
+    }
+    .back-row a { color: var(--accent); text-decoration: none; font-weight: 500; }
+    .back-row a:hover { text-decoration: underline; }
+
+    /* FOOTER */
+    footer {
+      text-align: center; padding: 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: .78rem; color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="logo">fl<span>o</span></a>
+    <div class="nav-right">
+      <a href="/login" class="btn btn-ghost">Log in</a>
+      <a href="/register" class="btn btn-primary">Sign up</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+
+      <!-- STEP INDICATOR -->
+      <div class="steps">
+        <div class="step active" id="step-1">
+          <div class="step-circle">1</div>
+          <div class="step-label">Email</div>
+        </div>
+        <div class="step-line" id="line-1"></div>
+        <div class="step" id="step-2">
+          <div class="step-circle">2</div>
+          <div class="step-label">Verify</div>
+        </div>
+        <div class="step-line" id="line-2"></div>
+        <div class="step" id="step-3">
+          <div class="step-circle">3</div>
+          <div class="step-label">Reset</div>
+        </div>
+      </div>
+
+      <div class="card">
+
+        <!-- ── PANEL 1: Enter email ── -->
+        <div class="panel active" id="panel-1">
+          <div class="panel-icon purple">🔑</div>
+          <h2>Forgot your password?</h2>
+          <p>Enter your registered email and we'll send you a reset code.</p>
+
+          <% if (locals.error) { %>
+            <div class="alert alert-error">⚠️ <%= error %></div>
+          <% } %>
+
+          <form id="form-email">
+            <div class="field">
+              <label for="email">Email address</label>
+              <div class="input-wrap">
+                <span class="input-icon">✉️</span>
+                <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email" />
+              </div>
+            </div>
+            <button type="submit" class="btn-submit">Send reset code →</button>
+          </form>
+
+          <div class="back-row">
+            Remember it? <a href="/login">Back to login</a>
+          </div>
+        </div>
+
+        <!-- ── PANEL 2: Enter OTP ── -->
+        <div class="panel" id="panel-2">
+          <div class="panel-icon amber">📨</div>
+          <h2>Check your inbox</h2>
+          <p>We sent a 6-digit code to <strong id="email-display">your email</strong>. It expires in 10 minutes.</p>
+
+          <form id="form-otp">
+            <div class="otp-row">
+              <input type="text" maxlength="1" class="otp-box" inputmode="numeric" />
+              <input type="text" maxlength="1" class="otp-box" inputmode="numeric" />
+              <input type="text" maxlength="1" class="otp-box" inputmode="numeric" />
+              <input type="text" maxlength="1" class="otp-box" inputmode="numeric" />
+              <input type="text" maxlength="1" class="otp-box" inputmode="numeric" />
+              <input type="text" maxlength="1" class="otp-box" inputmode="numeric" />
+            </div>
+
+            <div class="resend-row">
+              Didn't get it? <a href="#" id="resend-btn">Resend</a>
+              <span id="resend-timer"> in <span class="timer" id="countdown">60</span>s</span>
+            </div>
+
+            <button type="submit" class="btn-submit">Verify code →</button>
+          </form>
+
+          <div class="back-row">
+            <a href="#" onclick="goToStep(1)">← Change email</a>
+          </div>
+        </div>
+
+        <!-- ── PANEL 3: New password ── -->
+        <div class="panel" id="panel-3">
+          <div class="panel-icon purple">🔒</div>
+          <h2>Set new password</h2>
+          <p>Almost there. Choose a strong password for your account.</p>
+
+          <form action="/forgot-password/reset" method="POST" id="form-reset">
+            <input type="hidden" name="email" id="hidden-email" />
+            <input type="hidden" name="otp" id="hidden-otp" />
+
+            <div class="field">
+              <label for="new-password">New password</label>
+              <div class="input-wrap">
+                <span class="input-icon">🔒</span>
+                <input type="password" id="new-password" name="password" placeholder="At least 8 characters" required autocomplete="new-password" oninput="checkStrength(this.value)" />
+                <button type="button" class="toggle-pw" onclick="togglePw('new-password', this)">Show</button>
+              </div>
+              <div class="pw-strength">
+                <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
+                <div class="strength-label" id="strength-label">Enter a password</div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="confirm-password">Confirm password</label>
+              <div class="input-wrap">
+                <span class="input-icon">🔒</span>
+                <input type="password" id="confirm-password" name="confirmPassword" placeholder="Re-enter password" required autocomplete="new-password" />
+                <button type="button" class="toggle-pw" onclick="togglePw('confirm-password', this)">Show</button>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-submit">Reset password →</button>
+          </form>
+        </div>
+
+        <!-- ── PANEL 4: Success ── -->
+        <div class="panel" id="panel-4">
+          <div style="text-align:center; padding: .5rem 0;">
+            <div class="success-anim">✓</div>
+            <h2 style="text-align:center; margin-bottom:.5rem;">Password reset!</h2>
+            <p style="text-align:center;">Your password has been updated successfully. You can now log in with your new password.</p>
+            <a href="/login" class="btn-submit" style="display:block; text-decoration:none; text-align:center; margin-top:1.25rem;">
+              Go to login →
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <footer>&copy; <%= new Date().getFullYear() %> Flo — Personal Finance Tracker</footer>
+
+  <script>
+    let userEmail = '';
+    let otpValue = '';
+    let timerInterval;
+
+    // ── STEP NAVIGATION ──
+    function goToStep(n) {
+      // update panels
+      document.querySelectorAll('.panel').forEach((p, i) => {
+        p.classList.toggle('active', i + 1 === n);
+      });
+      // update step indicators
+      for (let i = 1; i <= 3; i++) {
+        const stepEl = document.getElementById('step-' + i);
+        const circle = stepEl.querySelector('.step-circle');
+        stepEl.classList.remove('active', 'done');
+        if (i < n) {
+          stepEl.classList.add('done');
+          circle.textContent = '✓';
+        } else if (i === n) {
+          stepEl.classList.add('active');
+          circle.textContent = i;
+        } else {
+          circle.textContent = i;
+        }
+      }
+      // update lines
+      for (let i = 1; i <= 2; i++) {
+        document.getElementById('line-' + i).classList.toggle('done', i < n);
+      }
+    }
+
+    // ── STEP 1: SEND EMAIL ──
+    document.getElementById('form-email').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector('.btn-submit');
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+
+      userEmail = document.getElementById('email').value.trim();
+
+      try {
+        const res = await fetch('/forgot-password/send-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: userEmail })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          document.getElementById('email-display').textContent = userEmail;
+          goToStep(2);
+          startTimer();
+        } else {
+          btn.textContent = 'Send reset code →';
+          btn.disabled = false;
+          showError('panel-1', data.message || 'Email not found. Please check and try again.');
+        }
+      } catch {
+        btn.textContent = 'Send reset code →';
+        btn.disabled = false;
+        showError('panel-1', 'Something went wrong. Please try again.');
+      }
+    });
+
+    // ── STEP 2: OTP BOXES ──
+    const otpBoxes = document.querySelectorAll('.otp-box');
+    otpBoxes.forEach((box, idx) => {
+      box.addEventListener('input', (e) => {
+        const val = e.target.value.replace(/\D/g,'');
+        e.target.value = val;
+        e.target.classList.toggle('filled', val.length > 0);
+        if (val && idx < otpBoxes.length - 1) otpBoxes[idx + 1].focus();
+      });
+      box.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !box.value && idx > 0) otpBoxes[idx - 1].focus();
+      });
+      box.addEventListener('paste', (e) => {
+        const pasted = e.clipboardData.getData('text').replace(/\D/g,'').slice(0,6);
+        pasted.split('').forEach((char, i) => {
+          if (otpBoxes[i]) { otpBoxes[i].value = char; otpBoxes[i].classList.add('filled'); }
+        });
+        e.preventDefault();
+      });
+    });
+
+    document.getElementById('form-otp').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector('.btn-submit');
+      btn.textContent = 'Verifying...';
+      btn.disabled = true;
+
+      otpValue = Array.from(otpBoxes).map(b => b.value).join('');
+      if (otpValue.length < 6) {
+        btn.textContent = 'Verify code →';
+        btn.disabled = false;
+        showError('panel-2', 'Please enter all 6 digits.');
+        return;
+      }
+
+      try {
+        const res = await fetch('/forgot-password/verify-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: userEmail, otp: otpValue })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          document.getElementById('hidden-email').value = userEmail;
+          document.getElementById('hidden-otp').value = otpValue;
+          clearInterval(timerInterval);
+          goToStep(3);
+        } else {
+          btn.textContent = 'Verify code →';
+          btn.disabled = false;
+          showError('panel-2', data.message || 'Invalid or expired code.');
+        }
+      } catch {
+        btn.textContent = 'Verify code →';
+        btn.disabled = false;
+        showError('panel-2', 'Something went wrong. Please try again.');
+      }
+    });
+
+    // ── COUNTDOWN TIMER ──
+    function startTimer() {
+      let seconds = 60;
+      const countdownEl = document.getElementById('countdown');
+      const resendBtn   = document.getElementById('resend-btn');
+      const timerText   = document.getElementById('resend-timer');
+      resendBtn.style.pointerEvents = 'none';
+      resendBtn.style.opacity = '.4';
+      timerText.style.display = 'inline';
+
+      timerInterval = setInterval(() => {
+        seconds--;
+        countdownEl.textContent = seconds;
+        if (seconds <= 0) {
+          clearInterval(timerInterval);
+          resendBtn.style.pointerEvents = '';
+          resendBtn.style.opacity = '1';
+          timerText.style.display = 'none';
+        }
+      }, 1000);
+    }
+
+    document.getElementById('resend-btn').addEventListener('click', (e) => {
+      e.preventDefault();
+      fetch('/forgot-password/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: userEmail })
+      });
+      otpBoxes.forEach(b => { b.value = ''; b.classList.remove('filled'); });
+      startTimer();
+    });
+
+    // ── STEP 3: RESET FORM ──
+    document.getElementById('form-reset').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const pw  = document.getElementById('new-password').value;
+      const cpw = document.getElementById('confirm-password').value;
+
+      if (pw.length < 8) { showError('panel-3','Password must be at least 8 characters.'); return; }
+      if (pw !== cpw)    { showError('panel-3', 'Passwords do not match.'); return; }
+
+      const btn = e.target.querySelector('.btn-submit');
+      btn.textContent = 'Updating...';
+      btn.disabled = true;
+      e.target.submit(); // real form POST
+    });
+
+    // ── PASSWORD STRENGTH ──
+    function checkStrength(val) {
+      const fill  = document.getElementById('strength-fill');
+      const label = document.getElementById('strength-label');
+      let score = 0;
+      if (val.length >= 8) score++;
+      if (/[A-Z]/.test(val)) score++;
+      if (/[0-9]/.test(val)) score++;
+      if (/[^A-Za-z0-9]/.test(val)) score++;
+
+      const levels = [
+        { pct:'0%',   color:'transparent', text:'Enter a password' },
+        { pct:'25%',  color:'#f26c6c',     text:'Weak' },
+        { pct:'50%',  color:'#f5a623',     text:'Fair' },
+        { pct:'75%',  color:'#7c6ef5',     text:'Good' },
+        { pct:'100%', color:'#3ecf8e',     text:'Strong 💪' },
+      ];
+      const lvl = val.length === 0 ? levels[0] : levels[score] || levels[4];
+      fill.style.width    = lvl.pct;
+      fill.style.background = lvl.color;
+      label.textContent   = lvl.text;
+    }
+
+    // ── TOGGLE PASSWORD VISIBILITY ──
+    function togglePw(id, btn) {
+      const input = document.getElementById(id);
+      input.type  = input.type === 'password' ? 'text' : 'password';
+      btn.textContent = input.type === 'password' ? 'Show' : 'Hide';
+    }
+
+    // ── SHOW INLINE ERROR ──
+    function showError(panelId, msg) {
+      const panel = document.getElementById(panelId);
+      let alert = panel.querySelector('.alert-error');
+      if (!alert) {
+        alert = document.createElement('div');
+        alert.className = 'alert alert-error';
+        panel.querySelector('form').prepend(alert);
+      }
+      alert.textContent = '⚠️ ' + msg;
+    }
+  </script>
+
+</body>
+</html>
