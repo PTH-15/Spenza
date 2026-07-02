@@ -710,7 +710,7 @@
                     <div class="strip-left">
                         <h2>Good <%= new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 17 ? 'afternoon'
                                 : 'evening' %>, <%= user.name.split(' ')[0] %> 👋</h2>
-        <p>Here' s your financial snapshot for <strong>
+        <p>Here's your financial snapshot for <strong>
                                     <%= new Date().toLocaleString('default', { month: 'long' }) %></strong></p>
                     </div>
                     <a href="/transaction/add" class="btn btn-primary">+ Add expense</a>
@@ -759,7 +759,7 @@
                         </span>
                     </div>
                     <div class="bar-track">
-                        <div class="bar-fill" style=`width: <%=Math.min(locals.budgetUsedPct || 0, 100) %>%;` ></div>
+                        <div class="bar-fill" style="width: <%=Math.min(locals.budgetUsedPct || 0, 100) %>%;" ></div>
                     </div>
                     <div class="budget-bar-footer">
                         <span>₹<%= (locals.totalExpense || 0).toLocaleString('en-IN') %> spent</span>
@@ -779,13 +779,15 @@
                     </div>
 
                     <div class="transactions-list">
-                        <% if (locals.recentTransactions && recentTransactions.length> 0) { %>
-                            <% recentTransactions.forEach(tx=> { %>
+                        <% if (locals.recentTransactions && recentTransactions.length > 0) { %>
+                            <% recentTransactions.forEach(tx => { %>
                                 <div class="tx-item">
-                                    <div class="tx-icon style=background: <%= tx.type === 'income' 
-                                        ? 'rgba(62,207,142,0.12)' 
-                                        : 'rgba(242,108,108,0.12)' %>;">
-                                        <%= tx.type==='income' ? %>
+                                    <div 
+                                        class="tx-icon 
+                                        style=background: <%= tx.type === 'income' 
+                                            ? 'rgba(62,207,142,0.12)' 
+                                            : 'rgba(242,108,108,0.12)' %>;">
+                                        <%= tx.type==='income' ? '+' : '-' %>
                                     </div>
                                     <div class="tx-info">
                                         <div class="tx-title">
