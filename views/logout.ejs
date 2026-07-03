@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flo — Log out</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+            --bg: #0D0D0E;
+            --surface: #16181c;
+            --surface-2: #1e2026;
+            --border: rgba(255, 255, 255, 0.07);
+            --border-hover: rgba(255, 255, 255, 0.14);
+            --text: #f0f0ee;
+            --muted: #7a7c82;
+            --accent: #f59e0b;
+            --accent-glow: #343c312e; /*future work*/
+            --green: #3ecf8e;
+            --red: #f26c6c;
+            --amber: #f5a623;
+            --radius: 14px;
+        }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 2rem;
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif; font-size: 1.35rem; font-weight: 800;
+      letter-spacing: -.5px; text-decoration: none; color: var(--text);
+      position: absolute; top: 1.5rem; left: 2rem;
+    }
+    .logo span { color: #22c55e; }
+
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 2.5rem 2rem;
+      width: 100%; max-width: 380px; text-align: center;
+      animation: fadeIn .2s ease;
+    }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+    .icon {
+      width: 60px; height: 60px; border-radius: 16px;
+      background: var(--red-glow); border: 1px solid rgba(242,108,108,.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; margin: 0 auto 1.5rem;
+    }
+
+    h1 { font-family: 'Sora', sans-serif; font-size: 1.4rem; font-weight: 800; margin-bottom: .5rem; }
+    p  { font-size: .875rem; color: var(--muted); line-height: 1.65; margin-bottom: 1.75rem; }
+
+    .actions { display: flex; flex-direction: column; gap: .6rem; }
+
+    .btn-logout {
+      width: 100%; padding: .85rem; background: var(--red); color: #fff;
+      border: none; border-radius: 10px; font-size: .9rem; font-weight: 600;
+      cursor: pointer; transition: .15s; font-family: 'Inter', sans-serif;
+      text-decoration: none; display: block;
+    }
+    .btn-logout:hover { background: #e05656; transform: translateY(-1px); }
+
+    .btn-cancel {
+      width: 100%; padding: .85rem; background: transparent; color: var(--muted);
+      border: 1px solid var(--border); border-radius: 10px; font-size: .9rem; font-weight: 500;
+      cursor: pointer; transition: .15s; font-family: 'Inter', sans-serif;
+      text-decoration: none; display: block;
+    }
+    .btn-cancel:hover { color: var(--text); border-color: var(--border-hover); background: var(--surface-2); }
+
+    footer {
+      position: absolute; bottom: 1.5rem;
+      font-size: .75rem; color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+
+  <a href="/" class="logo">Spen<span>za</span></a>
+
+  <div class="card">
+    <h1>Logging out?</h1>
+    <p>You'll need to sign in again to access your transactions and reports.</p>
+
+    <div class="actions">
+      <form action="/logout" method="POST">
+        <button type="submit" class="btn-logout">Yes, log me out</button>
+      </form>
+      <a href="javascript:history.back()" class="btn-cancel">Cancel, go back</a>
+    </div>
+  </div>
+
+  <footer>&copy; <%= new Date().getFullYear() %> Spenza — Personal Finance Tracker</footer>
+
+</body>
+</html>

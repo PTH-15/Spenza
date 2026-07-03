@@ -19,17 +19,18 @@
         }
 
         :root {
-            --bg: #0e0f11;
+            --bg: #0D0D0E;
             --surface: #16181c;
             --surface-2: #1e2026;
-            --border: rgba(255, 255, 255, .07);
-            --border-hover: rgba(255, 255, 255, .14);
+            --border: rgba(255, 255, 255, 0.07);
+            --border-hover: rgba(255, 255, 255, 0.14);
             --text: #f0f0ee;
             --muted: #7a7c82;
-            --accent: #7c6ef5;
-            --accent-glow: rgba(124, 110, 245, .18);
-            --red: #f26c6c;
+            --accent: #f59e0b;
+            --accent-glow: #343c312e; /*future work*/
             --green: #3ecf8e;
+            --red: #f26c6c;
+            --amber: #f5a623;
             --radius: 14px;
         }
 
@@ -59,7 +60,7 @@
         }
 
         .logo span {
-            color: var(--accent);
+            color: #22c55e;
         }
 
         .nav-links {
@@ -179,7 +180,7 @@
         }
 
         .btn:hover {
-            background: #6a5ee0;
+            background: #f44f02;
             transform: translateY(-1px);
         }
 
@@ -235,7 +236,7 @@
 <body>
 
     <nav>
-        <div class="logo">fl<span>o</span></div>
+        <div class="logo">Spen<span>za</span></div>
 
         <ul class="nav-links">
             <li><a href="/">Home</a></li>
@@ -313,7 +314,7 @@
     </main>
 
     <footer>
-        &copy; <%= new Date().getFullYear() %> Flow — Personal Finance Tracker
+        &copy; <%= new Date().getFullYear() %> Spenza — Personal Finance Tracker
     </footer>
 
 </body>

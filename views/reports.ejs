@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flo — Reports</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+
+  <style>
+
+    :root {
+            --bg: #0D0D0E;
+            --surface: #16181c;
+            --surface-2: #1e2026;
+            --border: rgba(255, 255, 255, 0.07);
+            --border-hover: rgba(255, 255, 255, 0.14);
+            --text: #f0f0ee;
+            --muted: #7a7c82;
+            --accent: #f59e0b;
+            --accent-glow: #343c312e; /*future work*/
+            --green: #3ecf8e;
+            --red: #f26c6c;
+            --amber: #f5a623;
+            --radius: 14px;
+        }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* NAV */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 2rem; border-bottom: 1px solid var(--border);
+      position: sticky; top: 0;
+      background: rgba(14,15,17,.88); backdrop-filter: blur(14px); z-index: 100;
+    }
+    .logo { font-family: 'Syne', sans-serif; font-size: 1.35rem; font-weight: 800; letter-spacing: -.5px; text-decoration: none; color: var(--text); }
+    .logo span { color: #22c55e; }
+    .nav-links { display: flex; gap: .25rem; list-style: none; }
+    .nav-links a { text-decoration: none; color: var(--muted); font-size: .875rem; font-weight: 500; padding: .45rem .85rem; border-radius: 8px; transition: .15s; }
+    .nav-links a:hover { color: var(--text); background: var(--surface); }
+    .nav-links a.active { color: var(--text); background: var(--surface-2); }
+    .btn { font-size: .875rem; font-weight: 500; padding: .5rem 1.1rem; border-radius: 8px; border: none; cursor: pointer; text-decoration: none; transition: .15s; font-family: 'Inter', sans-serif; display: inline-flex; align-items: center; gap: .4rem; }
+    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+    .btn-ghost:hover { color: var(--text); border-color: var(--border-hover); background: var(--surface); }
+    @media (max-width: 720px) { .nav-links { display: none; } }
+
+    /* PAGE */
+    .page { max-width: 1100px; margin: 0 auto; padding: 2.5rem 2rem; }
+
+    /* HEADER */
+    .page-header { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; }
+    .page-header h1 { font-family: 'Sora', sans-serif; font-size: 1.8rem; font-weight: 800; letter-spacing: -.5px; margin-bottom: .3rem; }
+    .page-header p { font-size: .875rem; color: var(--muted); }
+
+    /* PERIOD SELECTOR */
+    .period-bar {
+      display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: .75rem 1.25rem; margin-bottom: 1.75rem;
+    }
+    .period-label { font-size: .8rem; color: var(--muted); font-weight: 500; margin-right: .25rem; }
+    .period-tabs { display: flex; gap: .3rem; background: var(--surface-2); padding: .25rem; border-radius: 8px; border: 1px solid var(--border); }
+    .period-tab {
+      font-size: .8rem; font-weight: 600; padding: .4rem .85rem; border-radius: 6px;
+      border: none; background: transparent; color: var(--muted); cursor: pointer;
+      transition: .15s; font-family: 'Inter', sans-serif;
+    }
+    .period-tab.active { background: var(--accent); color: #fff; }
+    .period-divider { width: 1px; height: 20px; background: var(--border); margin: 0 .25rem; }
+    .period-nav { display: flex; align-items: center; gap: .4rem; margin-left: auto; }
+    .period-nav-btn {
+      width: 28px; height: 28px; border-radius: 7px; border: 1px solid var(--border);
+      background: var(--surface-2); color: var(--muted); cursor: pointer; font-size: .8rem;
+      display: flex; align-items: center; justify-content: center; transition: .15s;
+    }
+    .period-nav-btn:hover { color: var(--text); border-color: var(--border-hover); }
+    .period-current { font-size: .85rem; font-weight: 600; color: var(--text); min-width: 120px; text-align: center; }
+
+    /* STAT CARDS */
+    .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-bottom: 1.5rem; }
+    @media (max-width:900px) { .stats-grid { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width:480px) { .stats-grid { grid-template-columns: 1fr; } }
+
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 1.3rem 1.5rem; position: relative; overflow: hidden; transition: border-color .15s;
+    }
+    .stat-card:hover { border-color: var(--border-hover); }
+    /* .stat-card::after { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+    .stat-card.income::after  { background: var(--green); }
+    .stat-card.expense::after { background: var(--red); }
+    .stat-card.savings::after { background: var(--accent); }
+    .stat-card.txcount::after { background: var(--blue); } */
+
+    .stat-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:.7rem; }
+    .stat-label { font-size:.72rem; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
+    .stat-icon { width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:.85rem; }
+    .stat-icon.green  { background:var(--green-glow); }
+    .stat-icon.red    { background:var(--red-glow); }
+    .stat-icon.purple { background:var(--accent-glow); }
+    .stat-icon.blue   { background:var(--blue-glow); }
+
+    .stat-value { font-family:'Sora',sans-serif; font-size:1.6rem; font-weight:800; letter-spacing:-.5px; margin-bottom:.25rem; }
+    .stat-card.income  .stat-value { color:var(--green); }
+    .stat-card.expense .stat-value { color:var(--red); }
+    .stat-card.savings .stat-value { color:#a99cf8; }
+    .stat-card.txcount .stat-value { color:var(--blue); }
+    .stat-sub { font-size:.75rem; color:var(--muted); }
+
+    /* MAIN GRID */
+    .main-grid { display:grid; grid-template-columns:1fr 340px; gap:1.25rem; }
+    @media (max-width:860px) { .main-grid { grid-template-columns:1fr; } }
+
+    /* CARDS */
+    .card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; margin-bottom:1.25rem; }
+    .card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem; }
+    .card-title { font-family:'Sora',sans-serif; font-size:1rem; font-weight:700; }
+    .card-sub { font-size:.75rem; color:var(--muted); margin-top:.2rem; }
+
+    /* CHART */
+    .chart-wrap { height:220px; position:relative; }
+    .chart-tabs { display:flex; gap:.3rem; }
+    .chart-tab { font-size:.75rem; font-weight:600; padding:.3rem .7rem; border-radius:6px; border:none; background:transparent; color:var(--muted); cursor:pointer; transition:.15s; font-family:'Inter',sans-serif; }
+    .chart-tab.active { background:var(--surface-2); color:var(--text); }
+
+    /* CATEGORY BREAKDOWN */
+    .cat-row { margin-bottom:.85rem; }
+    .cat-row:last-child { margin-bottom:0; }
+    .cat-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:.35rem; }
+    .cat-name { display:flex; align-items:center; gap:.5rem; font-size:.83rem; font-weight:500; }
+    .cat-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+    .cat-right { display:flex; align-items:center; gap:.6rem; }
+    .cat-val { font-size:.83rem; font-weight:600; }
+    .cat-pct { font-size:.7rem; color:var(--muted); background:var(--surface-2); padding:.15rem .5rem; border-radius:999px; }
+    .cat-bar { height:5px; background:var(--surface-2); border-radius:999px; overflow:hidden; }
+    .cat-bar-fill { height:100%; border-radius:999px; transition:width .6s ease; }
+
+    /* TRANSACTION LIST */
+    .tx-list { border-radius:10px; overflow:hidden; border:1px solid var(--border); }
+    .tx-item { display:flex; align-items:center; gap:.85rem; padding:.9rem 1.1rem; border-bottom:1px solid var(--border); transition:background .12s; text-decoration:none; color:inherit; }
+    .tx-item:last-child { border-bottom:none; }
+    .tx-item:hover { background:var(--surface-2); }
+    .tx-icon { width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:.9rem; flex-shrink:0; }
+    .tx-icon.income  { background:var(--green-glow); }
+    .tx-icon.expense { background:var(--red-glow); }
+    .tx-info { flex:1; min-width:0; }
+    .tx-title { font-size:.85rem; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .tx-meta { font-size:.7rem; color:var(--muted); margin-top:.1rem; }
+    .tx-amount { font-family:'Sora',sans-serif; font-size:.875rem; font-weight:700; flex-shrink:0; }
+    .tx-amount.income  { color:var(--green); }
+    .tx-amount.expense { color:var(--red); }
+
+    /* SAVINGS RATE */
+    .savings-ring-wrap { display:flex; align-items:center; gap:1.5rem; }
+    .ring-svg { flex-shrink:0; }
+    .ring-info { flex:1; }
+    .ring-pct { font-family:'Sora',sans-serif; font-size:2rem; font-weight:800; color:#a99cf8; margin-bottom:.25rem; }
+    .ring-label { font-size:.8rem; color:var(--muted); margin-bottom:1rem; }
+    .ring-breakdown { display:flex; flex-direction:column; gap:.5rem; }
+    .ring-row { display:flex; align-items:center; justify-content:space-between; font-size:.8rem; }
+    .ring-row-label { color:var(--muted); display:flex; align-items:center; gap:.4rem; }
+    .ring-row-dot { width:6px; height:6px; border-radius:50%; }
+    .ring-row-val { font-weight:600; }
+
+    /* PAYMENT METHOD */
+    .pay-row { display:flex; align-items:center; gap:.75rem; padding:.65rem 0; border-bottom:1px solid var(--border); }
+    .pay-row:last-child { border-bottom:none; }
+    .pay-icon { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:.9rem; background:var(--surface-2); flex-shrink:0; }
+    .pay-info { flex:1; }
+    .pay-name { font-size:.83rem; font-weight:500; }
+    .pay-count { font-size:.7rem; color:var(--muted); }
+    .pay-amt { font-family:'Sora',sans-serif; font-size:.875rem; font-weight:700; color:var(--red); }
+    .pay-bar { height:3px; background:var(--surface-2); border-radius:999px; overflow:hidden; margin-top:.3rem; }
+    .pay-bar-fill { height:100%; border-radius:999px; background:var(--accent); }
+
+    /* EMPTY */
+    .empty { text-align:center; padding:2.5rem; color:var(--muted); font-size:.875rem; }
+    .empty .eicon { font-size:2rem; margin-bottom:.75rem; opacity:.5; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="logo">Spen<span>za</span></a>
+    <ul class="nav-links">
+      <li><a href="/home">Home</a></li>
+      <li><a href="/dashboard">Dashboard</a></li>
+      <li><a href="/transaction">Transactions</a></li>
+      <li><a href="/reports" class="active">Reports</a></li>
+      <li><a href="/profile">Profile</a></li>
+    </ul>
+    <a href="/logout" class="btn btn-ghost">Log out</a>
+  </nav>
+
+  <div class="page">
+
+    <!-- HEADER -->
+    <div class="page-header">
+      <div>
+        <h1>Reports</h1>
+        <p>Detailed breakdown of your income, expenses and spending habits</p>
+      </div>
+    </div>
+
+    <!-- PERIOD SELECTOR -->
+    <div class="period-bar">
+      <span class="period-label">View:</span>
+      <div class="period-tabs">
+        <button class="period-tab active" onclick="switchPeriod('monthly', this)">Monthly</button>
+        <button class="period-tab" onclick="switchPeriod('weekly',  this)">Weekly</button>
+        <button class="period-tab" onclick="switchPeriod('yearly',  this)">Yearly</button>
+      </div>
+      <div class="period-divider"></div>
+      <div class="period-nav">
+        <button class="period-nav-btn" onclick="shiftPeriod(-1)">‹</button>
+        <span class="period-current" id="periodLabel"></span>
+        <button class="period-nav-btn" onclick="shiftPeriod(1)">›</button>
+      </div>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="stats-grid">
+      <div class="stat-card income">
+        <div class="stat-top"><div class="stat-label">Income</div><div class="stat-icon green"></div></div>
+        <div class="stat-value" id="statIncome">₹0</div>
+        <div class="stat-sub" id="statIncomeSub">This period</div>
+      </div>
+      <div class="stat-card expense">
+        <div class="stat-top"><div class="stat-label">Expenses</div><div class="stat-icon red"></div></div>
+        <div class="stat-value" id="statExpense">₹0</div>
+        <div class="stat-sub" id="statExpenseSub">This period</div>
+      </div>
+      <div class="stat-card savings">
+        <div class="stat-top"><div class="stat-label">Savings</div><div class="stat-icon purple"></div></div>
+        <div class="stat-value" id="statSavings">₹0</div>
+        <div class="stat-sub">Income − Expenses</div>
+      </div>
+      <div class="stat-card txcount">
+        <div class="stat-top"><div class="stat-label">Transactions</div><div class="stat-icon blue"></div></div>
+        <div class="stat-value" id="statCount">0</div>
+        <div class="stat-sub">This period</div>
+      </div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="main-grid">
+
+      <!-- LEFT -->
+      <div>
+
+        <!-- INCOME VS EXPENSE CHART -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Income vs Expenses</div>
+              <div class="card-sub" id="chartSubLabel">Monthly overview</div>
+            </div>
+            <div class="chart-tabs">
+              <button class="chart-tab active" onclick="switchChart('bar',  this)">Bar</button>
+              <button class="chart-tab"        onclick="switchChart('line', this)">Line</button>
+            </div>
+          </div>
+          <div class="chart-wrap"><canvas id="mainChart"></canvas></div>
+        </div>
+
+        <!-- CATEGORY BREAKDOWN -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Spending by Category</div>
+          </div>
+          <div id="catBreakdown">
+            <div class="empty"><div class="eicon">📂</div><p>No expense data for this period</p></div>
+          </div>
+        </div>
+
+        <!-- RECENT TRANSACTIONS -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Transactions this period</div>
+            <a href="/transaction" style="font-size:.8rem; color:var(--accent); text-decoration:none; font-weight:500;">View all →</a>
+          </div>
+          <div id="txList">
+            <div class="empty"><div class="eicon">📭</div><p>No transactions found</p></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT -->
+      <div>
+
+        <!-- SAVINGS RATE -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">Savings Rate</div></div>
+          <div class="savings-ring-wrap">
+            <svg class="ring-svg" width="100" height="100" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="38" fill="none" stroke="var(--surface-2)" stroke-width="10"/>
+              <circle id="ringCircle" cx="50" cy="50" r="38" fill="none"
+                stroke="#7c6ef5" stroke-width="10"
+                stroke-dasharray="238.76" stroke-dashoffset="238.76"
+                stroke-linecap="round" transform="rotate(-90 50 50)"
+                style="transition:stroke-dashoffset .8s ease;"/>
+            </svg>
+            <div class="ring-info">
+              <div class="ring-pct" id="ringPct">0%</div>
+              <div class="ring-label">of income saved</div>
+              <div class="ring-breakdown">
+                <div class="ring-row">
+                  <span class="ring-row-label"><span class="ring-row-dot" style="background:var(--green)"></span>Income</span>
+                  <span class="ring-row-val" id="ringIncome" style="color:var(--green)">₹0</span>
+                </div>
+                <div class="ring-row">
+                  <span class="ring-row-label"><span class="ring-row-dot" style="background:var(--red)"></span>Spent</span>
+                  <span class="ring-row-val" id="ringExpense" style="color:var(--red)">₹0</span>
+                </div>
+                <div class="ring-row">
+                  <span class="ring-row-label"><span class="ring-row-dot" style="background:var(--accent)"></span>Saved</span>
+                  <span class="ring-row-val" id="ringSaved" style="color:#a99cf8">₹0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PAYMENT METHOD BREAKDOWN -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">By Payment Method</div></div>
+          <div id="payBreakdown">
+            <div class="empty"><div class="eicon">💳</div><p>No payment data yet</p></div>
+          </div>
+        </div>
+
+        <!-- TOP CATEGORIES DONUT -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">Category Split</div></div>
+          <div class="chart-wrap" style="height:180px;"><canvas id="donutChart"></canvas></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script>
+    // ── ALL TRANSACTIONS FROM SERVER ──
+    const allTransactions = <%- JSON.stringify(locals.transaction || []) %>;
+
+    const CAT_COLORS = {
+      Food:'#f5a623', Shopping:'#7c6ef5', Travel:'#4ea8f5', Bills:'#f26c6c',
+      Entertainment:'#3ecf8e', Education:'#e879f9', Health:'#fb7185',
+      Salary:'#3ecf8e', Freelance:'#a99cf8', Fuel:'#f97316', Other:'#7a7c82'
+    };
+    const PAY_ICONS = { Cash:'💵', UPI:'📱', 'Debit Card':'💳', 'Credit Card':'💳', 'Bank Transfer':'🏦' };
+
+    // ── PERIOD STATE ──
+    let currentPeriod = 'monthly';
+    let periodOffset  = 0; // 0 = current, -1 = prev, etc.
+
+    // ── FILTER TRANSACTIONS BY PERIOD ──
+    function getFiltered() {
+      const now = new Date();
+      return allTransactions.filter(t => {
+        const d = new Date(t.date);
+        if (currentPeriod === 'weekly') {
+          const startOfWeek = new Date(now);
+          startOfWeek.setDate(now.getDate() - ((now.getDay()+6)%7) + periodOffset * 7);
+          startOfWeek.setHours(0,0,0,0);
+          const endOfWeek = new Date(startOfWeek);
+          endOfWeek.setDate(startOfWeek.getDate() + 6);
+          endOfWeek.setHours(23,59,59,999);
+          return d >= startOfWeek && d <= endOfWeek;
+        }
+        if (currentPeriod === 'monthly') {
+          const target = new Date(now.getFullYear(), now.getMonth() + periodOffset, 1);
+          return d.getMonth() === target.getMonth() && d.getFullYear() === target.getFullYear();
+        }
+        if (currentPeriod === 'yearly') {
+          return d.getFullYear() === now.getFullYear() + periodOffset;
+        }
+      });
+    }
+
+    function getPeriodLabel() {
+      const now = new Date();
+      if (currentPeriod === 'monthly') {
+        const t = new Date(now.getFullYear(), now.getMonth() + periodOffset, 1);
+        return t.toLocaleString('default', { month: 'long', year: 'numeric' });
+      }
+      if (currentPeriod === 'weekly') {
+        const start = new Date(now);
+        start.setDate(now.getDate() - ((now.getDay()+6)%7) + periodOffset * 7);
+        const end = new Date(start); end.setDate(start.getDate() + 6);
+        return start.toLocaleDateString('en-IN',{day:'numeric',month:'short'}) + ' – ' + end.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+      }
+      if (currentPeriod === 'yearly') return String(now.getFullYear() + periodOffset);
+    }
+
+    // ── CHART LABELS ──
+    function getChartLabels() {
+      const now = new Date();
+      if (currentPeriod === 'weekly')  return ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+      if (currentPeriod === 'monthly') return Array.from({length: new Date(now.getFullYear(), now.getMonth()+periodOffset+1,0).getDate()}, (_,i)=>i+1);
+      if (currentPeriod === 'yearly')  return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    }
+
+    function getChartData(txs, type) {
+      const now = new Date();
+      const labels = getChartLabels();
+      const data = new Array(labels.length).fill(0);
+      txs.filter(t => t.type === type).forEach(t => {
+        const d = new Date(t.date);
+        let idx = 0;
+        if (currentPeriod === 'weekly')  idx = (d.getDay()+6)%7;
+        if (currentPeriod === 'monthly') idx = d.getDate() - 1;
+        if (currentPeriod === 'yearly')  idx = d.getMonth();
+        if (idx >= 0 && idx < data.length) data[idx] += t.amount;
+      });
+      return data;
+    }
+
+    // ── FMT ──
+    function fmt(n) { return '₹' + Math.abs(n).toLocaleString('en-IN'); }
+
+    // ── RENDER ALL ──
+    let mainChart, donutChart;
+    let chartType = 'bar';
+
+    function render() {
+      const txs = getFiltered();
+      document.getElementById('periodLabel').textContent = getPeriodLabel();
+
+      const income  = txs.filter(t=>t.type==='income') .reduce((s,t)=>s+t.amount,0);
+      const expense = txs.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+      const savings = income - expense;
+      const savingsPct = income > 0 ? Math.max(0, Math.round((savings/income)*100)) : 0;
+
+      // Stat cards
+      document.getElementById('statIncome') .textContent = fmt(income);
+      document.getElementById('statExpense').textContent = fmt(expense);
+      document.getElementById('statSavings').textContent = fmt(savings);
+      document.getElementById('statCount')  .textContent = txs.length;
+
+      // Savings ring
+      document.getElementById('ringPct')    .textContent = savingsPct + '%';
+      document.getElementById('ringIncome') .textContent = fmt(income);
+      document.getElementById('ringExpense').textContent = fmt(expense);
+      document.getElementById('ringSaved')  .textContent = fmt(savings);
+      const circumference = 238.76;
+      document.getElementById('ringCircle').style.strokeDashoffset = circumference - (circumference * Math.min(savingsPct,100) / 100);
+      document.getElementById('ringCircle').style.stroke = savings < 0 ? 'var(--red)' : '#7c6ef5';
+
+      // Main chart
+      const labels = getChartLabels();
+      const incomeData  = getChartData(txs, 'income');
+      const expenseData = getChartData(txs, 'expense');
+
+      if (mainChart) mainChart.destroy();
+      mainChart = new Chart(document.getElementById('mainChart'), {
+        type: chartType,
+        data: {
+          labels,
+          datasets: [
+            { label:'Income',   data:incomeData,  backgroundColor:chartType==='bar'?'rgba(62,207,142,.7)':'transparent',  borderColor:'#3ecf8e', borderWidth:2, pointBackgroundColor:'#3ecf8e', tension:.4, fill:chartType==='line', borderRadius:chartType==='bar'?4:0, borderSkipped:false },
+            { label:'Expenses', data:expenseData, backgroundColor:chartType==='bar'?'rgba(242,108,108,.7)':'transparent', borderColor:'#f26c6c', borderWidth:2, pointBackgroundColor:'#f26c6c', tension:.4, fill:chartType==='line', borderRadius:chartType==='bar'?4:0, borderSkipped:false }
+          ]
+        },
+        options: {
+          responsive:true, maintainAspectRatio:false,
+          plugins:{
+            legend:{ display:true, position:'top', labels:{ color:'#7a7c82', font:{size:11,family:'Inter'}, boxWidth:10, usePointStyle:true } },
+            tooltip:{ backgroundColor:'#1e2026', borderColor:'rgba(255,255,255,.07)', borderWidth:1, titleColor:'#f0f0ee', bodyColor:'#7a7c82', padding:10, callbacks:{ label: ctx => ' ' + fmt(ctx.parsed.y) } }
+          },
+          scales:{
+            x:{ grid:{ color:'rgba(255,255,255,.04)' }, ticks:{ color:'#7a7c82', font:{size:10}, maxTicksLimit:12 } },
+            y:{ grid:{ color:'rgba(255,255,255,.04)' }, ticks:{ color:'#7a7c82', font:{size:10}, callback: v => fmt(v) }, beginAtZero:true }
+          }
+        }
+      });
+
+      // Category breakdown
+      const catMap = {};
+      txs.filter(t=>t.type==='expense').forEach(t => { catMap[t.category] = (catMap[t.category]||0)+t.amount; });
+      const cats = Object.entries(catMap).sort((a,b)=>b[1]-a[1]);
+      const maxCat = cats.length ? cats[0][1] : 1;
+
+      const catEl = document.getElementById('catBreakdown');
+      if (cats.length === 0) {
+        catEl.innerHTML = `<div class="empty"><div class="eicon">📂</div><p>No expense data for this period</p></div>`;
+      } else {
+        catEl.innerHTML = cats.map(([name, amt]) => {
+          const pct = Math.round((amt/expense)*100);
+          const barW = Math.round((amt/maxCat)*100);
+          const color = CAT_COLORS[name]||'#7a7c82';
+          return `<div class="cat-row">
+            <div class="cat-top">
+              <div class="cat-name"><div class="cat-dot" style="background:${color}"></div>${name}</div>
+              <div class="cat-right"><span class="cat-val">${fmt(amt)}</span><span class="cat-pct">${pct}%</span></div>
+            </div>
+            <div class="cat-bar"><div class="cat-bar-fill" style="width:${barW}%;background:${color}"></div></div>
+          </div>`;
+        }).join('');
+      }
+
+      // Donut chart
+      if (donutChart) donutChart.destroy();
+      if (cats.length > 0) {
+        donutChart = new Chart(document.getElementById('donutChart'), {
+          type: 'doughnut',
+          data: {
+            labels: cats.map(c=>c[0]),
+            datasets:[{ data: cats.map(c=>c[1]), backgroundColor: cats.map(c=>CAT_COLORS[c[0]]||'#7a7c82'), borderWidth:0, hoverOffset:4 }]
+          },
+          options: {
+            responsive:true, maintainAspectRatio:false, cutout:'70%',
+            plugins:{
+              legend:{ display:false },
+              tooltip:{ backgroundColor:'#1e2026', borderColor:'rgba(255,255,255,.07)', borderWidth:1, titleColor:'#f0f0ee', bodyColor:'#7a7c82', padding:10, callbacks:{ label: ctx => ' ' + fmt(ctx.parsed) + ' · ' + Math.round((ctx.parsed/expense)*100) + '%' } }
+            }
+          }
+        });
+      } else {
+        document.getElementById('donutChart').getContext('2d').clearRect(0,0,300,300);
+      }
+
+      // Payment method breakdown
+      const payMap = {};
+      const payCount = {};
+      txs.filter(t=>t.type==='expense').forEach(t => {
+        const pm = t.paymentMethod || 'Other';
+        payMap[pm]   = (payMap[pm]||0) + t.amount;
+        payCount[pm] = (payCount[pm]||0) + 1;
+      });
+      const pays = Object.entries(payMap).sort((a,b)=>b[1]-a[1]);
+      const maxPay = pays.length ? pays[0][1] : 1;
+
+      const payEl = document.getElementById('payBreakdown');
+      if (pays.length === 0) {
+        payEl.innerHTML = `<div class="empty"><div class="eicon">💳</div><p>No payment data yet</p></div>`;
+      } else {
+        payEl.innerHTML = pays.map(([name, amt]) => {
+          const barW = Math.round((amt/maxPay)*100);
+          return `<div class="pay-row">
+            <div class="pay-icon">${PAY_ICONS[name]||'💰'}</div>
+            <div class="pay-info">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <span class="pay-name">${name}</span>
+                <span class="pay-amt">${fmt(amt)}</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.2rem;">
+                <span class="pay-count">${payCount[name]} transaction${payCount[name]>1?'s':''}</span>
+              </div>
+              <div class="pay-bar"><div class="pay-bar-fill" style="width:${barW}%"></div></div>
+            </div>
+          </div>`;
+        }).join('');
+      }
+
+      // Transaction list
+      const txEl = document.getElementById('txList');
+      const sorted = [...txs].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,8);
+      if (sorted.length === 0) {
+        txEl.innerHTML = `<div class="empty"><div class="eicon">📭</div><p>No transactions found</p></div>`;
+      } else {
+        txEl.innerHTML = `<div class="tx-list">${sorted.map(tx => `
+          <a href="/transaction/edit/${tx._id}" class="tx-item">
+            <div class="tx-icon ${tx.type}">${tx.type==='income'?'💰':'🛒'}</div>
+            <div class="tx-info">
+              <div class="tx-title">${tx.title}</div>
+              <div class="tx-meta">${tx.category} · ${new Date(tx.date).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</div>
+            </div>
+            <div class="tx-amount ${tx.type}">${tx.type==='income'?'+':'−'}${fmt(tx.amount)}</div>
+          </a>`).join('')}</div>`;
+      }
+    }
+
+    // ── CONTROLS ──
+    function switchPeriod(p, btn) {
+      currentPeriod = p; periodOffset = 0;
+      document.querySelectorAll('.period-tab').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('chartSubLabel').textContent =
+        p === 'weekly' ? 'Weekly overview' : p === 'yearly' ? 'Yearly overview' : 'Monthly overview';
+      render();
+    }
+
+    function shiftPeriod(dir) {
+      periodOffset += dir;
+      render();
+    }
+
+    function switchChart(type, btn) {
+      chartType = type;
+      document.querySelectorAll('.chart-tab').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      render();
+    }
+
+    // ── INIT ──
+    render();
+  </script>
+
+</body>
+</html>

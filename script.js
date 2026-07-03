@@ -28,7 +28,7 @@ app.use(session({
 }))
 function isLoggedIn(req, res, next) {
 
-    console.log("Session in middleware:", req.session);
+    // console.log("Session in middleware:", req.session); addded for debugging
 
     if (!req.session.userId) {
         return res.redirect("/login");
@@ -298,12 +298,12 @@ app.get("/transaction/add", isLoggedIn, (req, res) => {
 app.post("/transaction/add", isLoggedIn, async (req, res) => {
     const { title, amount, category, type, date, paymentMethod } = req.body;
 
-    if (!title || !amount || !category || !type || !date || !paymentMethod) {
-        return res.render("add-transaction", {
-            error: "All fields are required.",
-            old: req.body
-        });
-    }
+    // if (!title || !amount || !category || !type || !date || !paymentMethod) {
+    //     return res.render("add-transaction", {
+    //         error: "All fields are required.",
+    //         old: req.body
+    //     });
+    // }
 
     await Expenses.create({ ...req.body, user: req.session.userId });
     res.redirect("/transaction");
@@ -430,19 +430,52 @@ app.get("/profile", isLoggedIn, async (req, res) => {
         user
     });
  })
-app.get("/logout", isLoggedIn, (req, res) => {
-    req.session.destroy((err) => {
-
-        if (err) {
-            return res.send("Logout failed");
-        }
-
-        res.redirect("/login");
-
+app.get('/logout', isLoggedIn, (req, res) => {
+  res.render('logout');
+});
+app.post('/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) console.log(err);
+    res.redirect('/login');
+  });
+});
+app.get("/reports", isLoggedIn, async (req, res) => {
+   
+    const user = await User.findById(req.session.userId);
+    const transaction = await Expenses.find({
+        user: req.session.userId
     });
-})
+    const income = transaction.filter(val => val.type === "income");
+    const totalIncome = income.reduce((sum, val) => sum + val.amount, 0);
 
+    const expense = transaction.filter(val => val.type === "expense");
+    const totalExpense = expense.reduce((sum, val) => sum + val.amount, 0);
+    
+    const monthlyData = {};
+    transaction.forEach(t => {
+        const month = new Date(t.date).toLocaleString("default", {
+            month: "short"
+        });
+        monthlyData[month] = (monthlyData[month] || 0) + t.amount;
+    });
 
+    const categoryData = {};
+    transaction.forEach(t => {
+        if (t.type === "expense") {
+            categoryData[t.category] =
+                (categoryData[t.category] || 0) + t.amount;
+        }
+    });
+ 
+    res.render("reports", {
+        user,
+        transaction,
+        totalIncome,
+        totalExpense,
+        monthlyData,
+        categoryData
+    });
+});
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

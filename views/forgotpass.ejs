@@ -11,20 +11,20 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #0e0f11;
-      --surface: #16181c;
-      --surface-2: #1e2026;
-      --border: rgba(255,255,255,.07);
-      --border-hover: rgba(255,255,255,.14);
-      --border-focus: rgba(124,110,245,.6);
-      --text: #f0f0ee;
-      --muted: #7a7c82;
-      --accent: #7c6ef5;
-      --accent-glow: rgba(124,110,245,.15);
-      --green: #3ecf8e;
-      --red: #f26c6c;
-      --radius: 14px;
-    }
+            --bg: #0D0D0E;
+            --surface: #16181c;
+            --surface-2: #1e2026;
+            --border: rgba(255, 255, 255, 0.07);
+            --border-hover: rgba(255, 255, 255, 0.14);
+            --text: #f0f0ee;
+            --muted: #7a7c82;
+            --accent: #f59e0b;
+            --accent-glow: #343c312e; /*future work*/
+            --green: #3ecf8e;
+            --red: #f26c6c;
+            --amber: #f5a623;
+            --radius: 14px;
+        }
 
     body {
       font-family: 'Inter', sans-serif;
@@ -44,7 +44,7 @@
       backdrop-filter: blur(14px);
     }
     .logo { font-family: 'Syne', sans-serif; font-size: 1.35rem; font-weight: 800; letter-spacing: -.5px; text-decoration: none; color: var(--text); }
-    .logo span { color: var(--accent); }
+    .logo span { color: #22c55e; }
     .nav-right { display: flex; gap: .6rem; }
     .btn { font-size: .875rem; font-weight: 500; padding: .5rem 1.1rem; border-radius: 8px; border: none; cursor: pointer; text-decoration: none; transition: .15s; font-family: 'Inter', sans-serif; }
     .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
@@ -152,7 +152,7 @@
     .panel-icon.green  { background: rgba(62,207,142,.12); border: 1px solid rgba(62,207,142,.25); }
 
     .panel h2 {
-      font-family: 'Syne', sans-serif;
+      font-family: 'Sora', sans-serif;
       font-size: 1.4rem; font-weight: 800; letter-spacing: -.4px;
       margin-bottom: .4rem;
     }
@@ -264,7 +264,7 @@
 <body>
 
   <nav>
-    <a href="/" class="logo">fl<span>o</span></a>
+    <a href="/" class="logo">Spen<span>za</span></a>
     <div class="nav-right">
       <a href="/login" class="btn btn-ghost">Log in</a>
       <a href="/register" class="btn btn-primary">Sign up</a>
