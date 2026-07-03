@@ -425,11 +425,47 @@ app.get("/dashboard", isLoggedIn, async (req, res) => {
 
 app.get("/profile", isLoggedIn, async (req, res) => {
     const user = await User.findById(req.session.userId);
+    const monthlyBudget = user.monthlyBudget
+    const transaction = await Expenses.find({user: req.session.userId});
+    const totalIncome = transaction
+        .filter(t => t.type === "income")
+        .reduce((sum, t) => sum + t.amount, 0);
+
+    const totalExpense = transaction
+        .filter(t => t.type === "expense")
+        .reduce((sum, t) => sum + t.amount, 0);
+
+    const netSavings = totalIncome - totalExpense;
+    const txCount = transaction.length;
+
 
     res.render("profile", {
-        user
+        user,
+        totalIncome,
+        txCount,
+        totalExpense,
+        netSavings,
+        monthlyBudget
     });
  })
+
+
+app.post("/profile/update",isLoggedIn,async (req,res)=>{
+    const { name, email} = req.body;
+    await User.findByIdAndUpdate(req.session.userId , { name, email }, { returnDocument: "after" })
+    res.redirect("/profile")
+})
+
+app.post("/profile/budget",isLoggedIn, async (req,res)=>{
+    const monthlyBudget = Number(req.body.monthlyBudget);
+    await User.findByIdAndUpdate(
+    req.session.userId, { monthlyBudget }, { new: true });
+    res.redirect("/profile")
+})
+
+app.post("/profile/change-password",isLoggedIn,async (req,res)=>{
+    
+})
 app.get('/logout', isLoggedIn, (req, res) => {
   res.render('logout');
 });

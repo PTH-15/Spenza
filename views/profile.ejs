@@ -180,7 +180,7 @@
       border-radius: 10px; font-size: .875rem; font-weight: 600; cursor: pointer;
       transition: .15s; font-family: 'Inter', sans-serif;
     }
-    .btn-submit:hover { background: #6a5ee0; transform: translateY(-1px); }
+    .btn-submit:hover { background: #f44f02; transform: translateY(-1px); }
 
     .btn-danger {
       padding: .8rem 1.4rem; background: transparent; color: var(--red);
@@ -209,7 +209,7 @@
     .confirm-cancel { flex: 1; padding: .7rem; background: var(--surface-2); color: var(--text); border: 1px solid var(--border); border-radius: 9px; font-size: .85rem; font-weight: 600; cursor: pointer; transition: .15s; font-family: 'Inter', sans-serif; }
     .confirm-cancel:hover { border-color: var(--border-hover); }
     .confirm-delete { flex: 1; padding: .7rem; background: var(--red); color: #fff; border: none; border-radius: 9px; font-size: .85rem; font-weight: 600; cursor: pointer; transition: .15s; font-family: 'Inter', sans-serif; }
-    .confirm-delete:hover { background: #e05656; }
+    .confirm-delete:hover { background: #f44f02; }
   </style>
 </head>
 <body>
@@ -268,6 +268,10 @@
           <div class="sidebar-stat">
             <span class="sidebar-stat-label">Transactions</span>
             <span class="sidebar-stat-val purple"><%= locals.txCount || 0 %></span>
+          </div>
+          <div class="sidebar-stat">
+            <span class="sidebar-stat-label">Budget</span>
+            <span class="sidebar-stat-val purple"><%= (locals.monthlyBudget || 0).toLocaleString('en-IN')  %></span>
           </div>
         </div>
 
