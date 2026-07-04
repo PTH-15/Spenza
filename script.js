@@ -127,7 +127,7 @@ app.post("/register", async (req, res) => {
 
     const { name, email, password, confirmPassword } = req.body
     if (password !== confirmPassword) {
-        return res.render("register", { error: "Password ain't matching ngga" });
+        return res.render("register", { error: "Password ain't matching.." });
     }
     const existingUser = await User.findOne({ email })
     if (existingUser) {

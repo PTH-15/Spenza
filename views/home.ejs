@@ -657,6 +657,10 @@
             border-top: 1px solid var(--border);
             margin-top: 2rem;
         }
+        .hero_text{
+            text-align: end;
+            display: flex;
+        }
     </style>
 </head>
 
@@ -664,9 +668,8 @@
 
     <!-- NAV -->
     <nav>
-        <div class="logo">Your Money<span>Organized in one place</span></div>
-        <!-- <div class="logo">Spen<span>za</span></div> -->
         <% if (locals.user) { %>
+            <div class="logo">Spen<span>za</span></div>
             <ul class="nav-links">
                 <li><a href="/home" class="active">Home</a></li>
                 <li><a href="/dashboard">Dashboard</a></li>
@@ -677,17 +680,17 @@
             <% } else { %>
                 <ul class="nav-links"></ul>
                 <% } %>
-                    <div class="nav-actions">
-                        <% if (locals.user) { %>
+                <div class="nav-actions">
+                    <% if (locals.user) { %>
                             <a href="/logout" class="btn btn-ghost">Log out</a>
                             <% } else { %>
                                 <a href="/login" class="btn btn-ghost">Log in</a>
                                 <a href="/register" class="btn btn-primary">Get started</a>
                                 <% } %>
-                    </div>
-    </nav>
-
-    <% if (!locals.user) { %>
+                            </div>
+                        </nav>
+                        
+                        <% if (!locals.user) { %>
         <!-- ── HERO (logged-out) ── -->
         <section class="hero">
             <!-- <div class="hero-badge">
@@ -697,10 +700,13 @@
             <h1>Spen<em>za</em></h1>
             <!-- <h1>Your Money<br /><em>Organized in one place</em></h1> -->
             <p>See where your money goes with simple expense tracking, budgets, and clear insights<p>
-            <div class="hero-cta">
-                <a href="/register" class="btn btn-primary btn-lg">Start for free</a>
-                <a href="/login" class="btn btn-ghost btn-lg">I have an account</a>
-            </div>
+                <div class="hero-cta">
+                    <div class="logo hero_text">Your Money<span>Organized in one place</span></div>
+                    <div>
+                        <a href="/register" class="btn btn-primary btn-lg">Start for free</a>
+                        <a href="/login" class="btn btn-ghost btn-lg">I have an account</a>
+                    </div>
+                </div>
         </section>
 
         <% } else { %>
@@ -710,7 +716,7 @@
                 <div class="strip-card">
                     <div class="strip-left">
                         <h2>Good <%= new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 17 ? 'afternoon'
-                                : 'evening' %>, <%= user.name.split(' ')[0] %> Dawg</h2>
+                                : 'evening' %>, <%= user.name.split(' ')[0] %></h2>
         <p>Here's your financial snapshot for <strong>
                                     <%= new Date().toLocaleString('default', { month: 'long' }) %></strong></p>
                     </div>
