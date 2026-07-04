@@ -8,13 +8,8 @@ const Expenses = mongoose.Schema({
     amount:{type :Number,required:true},
     date:{type :Date,required:true},
     type:{type :String,required:true},
-    user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true},
-    paymentMethod: {
-    type: String,
-    required: true}
+    user: {type: mongoose.Schema.Types.ObjectId,ref: "User",required: true},
+    paymentMethod: {type: String, required: true}
 })
 
 

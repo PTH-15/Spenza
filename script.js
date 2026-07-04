@@ -22,8 +22,8 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie:{
-        secure :false
+    cookie: {
+        secure: false
     }
 }))
 function isLoggedIn(req, res, next) {
@@ -38,44 +38,44 @@ function isLoggedIn(req, res, next) {
 }
 
 function getWeeklyData(transactions) {
-  const days = [0,0,0,0,0,0,0];
-  const now = new Date();
-  const startOfWeek = new Date(now);
-  startOfWeek.setDate(now.getDate() - ((now.getDay() + 6) % 7));
-  startOfWeek.setHours(0,0,0,0);
+    const days = [0, 0, 0, 0, 0, 0, 0];
+    const now = new Date();
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+    startOfWeek.setHours(0, 0, 0, 0);
 
-  transactions.forEach(t => {
-    if (t.type !== 'expense') return;
-    const d = new Date(t.date);
-    if (d >= startOfWeek) {
-      const dayIndex = (d.getDay() + 6) % 7;
-      days[dayIndex] += t.amount;
-    }
-  });
-  return days;
+    transactions.forEach(t => {
+        if (t.type !== 'expense') return;
+        const d = new Date(t.date);
+        if (d >= startOfWeek) {
+            const dayIndex = (d.getDay() + 6) % 7;
+            days[dayIndex] += t.amount;
+        }
+    });
+    return days;
 }
 
 function getMonthlyData(transactions) {
-  const months = Array(12).fill(0);
-  const year = new Date().getFullYear();
-  transactions.forEach(t => {
-    if (t.type !== 'expense') return;
-    const d = new Date(t.date);
-    if (d.getFullYear() === year) {
-      months[d.getMonth()] += t.amount;
-    }
-  });
-  return months;
+    const months = Array(12).fill(0);
+    const year = new Date().getFullYear();
+    transactions.forEach(t => {
+        if (t.type !== 'expense') return;
+        const d = new Date(t.date);
+        if (d.getFullYear() === year) {
+            months[d.getMonth()] += t.amount;
+        }
+    });
+    return months;
 }
 
 function getCategoryBreakdown(transactions) {
-  const map = {};
-  transactions.filter(t => t.type === 'expense').forEach(t => {
-    map[t.category] = (map[t.category] || 0) + t.amount;
-  });
-  return Object.entries(map)
-    .map(([name, amount]) => ({ name, amount }))
-    .sort((a,b) => b.amount - a.amount);
+    const map = {};
+    transactions.filter(t => t.type === 'expense').forEach(t => {
+        map[t.category] = (map[t.category] || 0) + t.amount;
+    });
+    return Object.entries(map)
+        .map(([name, amount]) => ({ name, amount }))
+        .sort((a, b) => b.amount - a.amount);
 }
 function categoryEmoji(category) {
     switch (category) {
@@ -110,7 +110,7 @@ app.post("/login", async (req, res) => {
     bcrypt.compare(password, user.password, (err, result) => {
         if (result) {
             req.session.userId = user._id
-            
+
             // console.log(req.session);
             res.redirect('/transaction')
         }
@@ -118,7 +118,7 @@ app.post("/login", async (req, res) => {
             res.send("Incorrect Password")
         }
     })
-    
+
 })
 app.get("/register", (req, res) => {
     res.render('register')
@@ -166,7 +166,7 @@ app.post("/forgot-password/send-otp", async (req, res) => {
     res.json({
         success: true,
         message: "OTP sent"
-});
+    });
 })
 app.post("/forgot-password/verify-otp", async (req, res) => {
     const { otp, email } = req.body
@@ -237,7 +237,7 @@ app.get("/transaction", isLoggedIn, async (req, res) => {
     // console.log("Session:", req.session);
     // console.log(req.query)
     let query = {
-    user: req.session.userId
+        user: req.session.userId
     }
     if (req.query.type) {
         query.type = req.query.type
@@ -245,7 +245,7 @@ app.get("/transaction", isLoggedIn, async (req, res) => {
     if (req.query.category) {
         query.category = req.query.category
     }
-    if (req.query.paymentMethod){ 
+    if (req.query.paymentMethod) {
         query.paymentMethod = req.query.paymentMethod;
     }
     if (req.query.search) {
@@ -271,7 +271,7 @@ app.get("/transaction", isLoggedIn, async (req, res) => {
         transaction = transaction.sort({ amount: 1 });
     }
     if (req.query.paymentMethod) {
-    query.paymentMethod = req.query.paymentMethod;
+        query.paymentMethod = req.query.paymentMethod;
     }
     transaction = await transaction
     const income = transaction.filter(val => val.type === "income")
@@ -341,26 +341,26 @@ app.get("/home", isLoggedIn, async (req, res) => {
 
     const now = new Date();
     const thisMonth = transaction.filter(t => {
-    const d = new Date(t.date);
-    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-  });
+        const d = new Date(t.date);
+        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    });
     const income = transaction.filter(val => val.type === "income");
     const totalIncome = income.reduce((sum, val) => sum + val.amount, 0);
 
     const expense = transaction.filter(val => val.type === "expense");
     const totalExpense = expense.reduce((sum, val) => sum + val.amount, 0);
-    const monthlyBudget = totalIncome 
+    const monthlyBudget = totalIncome
     const remainingBudget = monthlyBudget - totalExpense
     const netSaving = totalIncome - totalExpense;
-    const budgetUsedPct   = monthlyBudget > 0 
-    ? Math.round((totalExpense / monthlyBudget) * 100) 
-    : 0;
+    const budgetUsedPct = monthlyBudget > 0
+        ? Math.round((totalExpense / monthlyBudget) * 100)
+        : 0;
 
     const recentTransactions = await Expenses.find({
         user: req.session.userId
     })
-    .sort({ date: -1 })
-    .limit(5);
+        .sort({ date: -1 })
+        .limit(5);
 
     res.render("home", {
         user,
@@ -370,63 +370,78 @@ app.get("/home", isLoggedIn, async (req, res) => {
         remainingBudget,
         monthlyBudget,
         recentTransactions: [...transaction]
-      .sort((a,b) => new Date(b.date) - new Date(a.date))
-      .slice(0, 5),
+            .sort((a, b) => new Date(b.date) - new Date(a.date))
+            .slice(0, 5),
         budgetUsedPct
     });
 
 });
+
+
+
+
+
+
+
+
+
+
 app.get("/dashboard", isLoggedIn, async (req, res) => {
     const user = await User.findById(req.session.userId);
     const transaction = await Expenses.find({
         user: req.session.userId
     });
     const now = new Date();
+    const selectedMonth = req.query.month || `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    const [year, month] = selectedMonth.split("-");
     const thisMonth = transaction.filter(t => {
-    const d = new Date(t.date);
-    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+        const d = new Date(t.date);
+        return d.getFullYear() === Number(year) && d.getMonth() === Number(month) - 1;
     });
-    const income = transaction.filter(val => val.type === "income");
-    const totalIncome = income.reduce((sum, val) => sum + val.amount, 0);
 
+    // ❌ REMOVED the early if/else res.render block that was here
+
+    const income = transaction.filter(val => val.type === "income");
     const expense = transaction.filter(val => val.type === "expense");
+
+    const totalIncome = income.reduce((sum, val) => sum + val.amount, 0);
     const totalExpense = expense.reduce((sum, val) => sum + val.amount, 0);
-    const monthlyBudget = totalIncome 
-    const remainingBudget = monthlyBudget - totalExpense
+    const monthlyBudget = totalIncome;
+    const remainingBudget = monthlyBudget - totalExpense;
     const netSaving = totalIncome - totalExpense;
 
     const recentTransactions = await Expenses.find({
         user: req.session.userId
     })
-    .sort({ date: -1 })
-    .limit(5);
-    const budgetUsedPct   = monthlyBudget > 0   // 👈 this was missing
-    ? Math.round((totalExpense / monthlyBudget) * 100)
-    : 0;
+        .sort({ date: -1 })
+        .limit(5);
+
+    const budgetUsedPct = monthlyBudget > 0
+        ? Math.round((totalExpense / monthlyBudget) * 100)
+        : 0;
 
     res.render('dashboard', {
-    user,
-    totalIncome,
-    totalExpense,
-    remainingBudget,
-    monthlyBudget,
-    budgetUsedPct,
-    recentTransactions: [...transaction].sort((a,b) => new Date(b.date)-new Date(a.date)).slice(0,6),
-    topExpenses: [...transaction].filter(t=>t.type==='expense').sort((a,b)=>b.amount-a.amount).slice(0,5),
-    categoryBreakdown: getCategoryBreakdown(thisMonth),  
-    weeklyData:  getWeeklyData(transaction),            
-    monthlyData: getMonthlyData(transaction),            
-    weeklyIncome:  [0,0,0,0,0,0,0],
-    monthlyIncome: Array(12).fill(0), 
-});
-
-
+        user,
+        totalIncome,
+        totalExpense,
+        remainingBudget,
+        monthlyBudget,
+        budgetUsedPct,
+        recentTransactions: [...transaction].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 6),
+        topExpenses: [...transaction].filter(t => t.type === 'expense').sort((a, b) => b.amount - a.amount).slice(0, 5),
+        categoryBreakdown: getCategoryBreakdown(thisMonth),
+        weeklyData: getWeeklyData(transaction),
+        monthlyData: getMonthlyData(transaction),
+        weeklyIncome: [0, 0, 0, 0, 0, 0, 0],
+        monthlyIncome: Array(12).fill(0),
+        selectedMonth,
+    });
 });
 
 app.get("/profile", isLoggedIn, async (req, res) => {
     const user = await User.findById(req.session.userId);
     const monthlyBudget = user.monthlyBudget
-    const transaction = await Expenses.find({user: req.session.userId});
+    const transaction = await Expenses.find({ user: req.session.userId });
     const totalIncome = transaction
         .filter(t => t.type === "income")
         .reduce((sum, t) => sum + t.amount, 0);
@@ -447,36 +462,56 @@ app.get("/profile", isLoggedIn, async (req, res) => {
         netSavings,
         monthlyBudget
     });
- })
+})
 
 
-app.post("/profile/update",isLoggedIn,async (req,res)=>{
-    const { name, email} = req.body;
-    await User.findByIdAndUpdate(req.session.userId , { name, email }, { returnDocument: "after" })
+app.post("/profile/update", isLoggedIn, async (req, res) => {
+    const { name, email } = req.body;
+    await User.findByIdAndUpdate(req.session.userId, { name, email }, { returnDocument: "after" })
     res.redirect("/profile")
 })
 
-app.post("/profile/budget",isLoggedIn, async (req,res)=>{
+app.post("/profile/budget", isLoggedIn, async (req, res) => {
     const monthlyBudget = Number(req.body.monthlyBudget);
     await User.findByIdAndUpdate(
-    req.session.userId, { monthlyBudget }, { new: true });
+        req.session.userId, { monthlyBudget }, { new: true });
     res.redirect("/profile")
 })
 
-app.post("/profile/change-password",isLoggedIn,async (req,res)=>{
-    
+app.post("/profile/change-password", isLoggedIn, async (req, res) => {
+    const user = await User.findById(req.session.userId);
+    const pass = user.password
+    const { confirmPassword, newPassword, currentPassword } = req.body
+    bcrypt.compare(currentPassword, pass, (err, result) => {
+        if (!result) {
+            res.send("Incorrect Password")
+        }
+        
+        if (newPassword !== confirmPassword) {
+            return res.send("Password aint matched")
+        }
+        
+        bcrypt.genSalt(10, (err, salt) => {
+            bcrypt.hash(newPassword, salt, async (err, hash) => {
+                await User.findByIdAndUpdate(req.session.userId, { password: hash }, {new : true});
+                res.redirect("/profile");
+            })
+        })    
+    })
 })
+
 app.get('/logout', isLoggedIn, (req, res) => {
-  res.render('logout');
+    res.render('logout');
 });
+
 app.post('/logout', (req, res) => {
-  req.session.destroy((err) => {
-    if (err) console.log(err);
-    res.redirect('/login');
-  });
+    req.session.destroy((err) => {
+        if (err) console.log(err);
+        res.redirect('/login');
+    });
 });
 app.get("/reports", isLoggedIn, async (req, res) => {
-   
+
     const user = await User.findById(req.session.userId);
     const transaction = await Expenses.find({
         user: req.session.userId
@@ -486,7 +521,7 @@ app.get("/reports", isLoggedIn, async (req, res) => {
 
     const expense = transaction.filter(val => val.type === "expense");
     const totalExpense = expense.reduce((sum, val) => sum + val.amount, 0);
-    
+
     const monthlyData = {};
     transaction.forEach(t => {
         const month = new Date(t.date).toLocaleString("default", {
@@ -502,7 +537,7 @@ app.get("/reports", isLoggedIn, async (req, res) => {
                 (categoryData[t.category] || 0) + t.amount;
         }
     });
- 
+
     res.render("reports", {
         user,
         transaction,

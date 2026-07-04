@@ -65,7 +65,7 @@
         }
 
         .logo span {
-            color:#22c55e;
+            color:var(--accent);
         }
 
         .nav-links {
@@ -193,7 +193,7 @@
 
         .hero h1 em {
             font-style: normal;
-            color: var(--accent);
+            color: #22c55e;
         }
 
         .hero p {
@@ -664,7 +664,8 @@
 
     <!-- NAV -->
     <nav>
-        <div class="logo">Spen<span>za</span></div>
+        <div class="logo">Your Money<span>Organized in one place</span></div>
+        <!-- <div class="logo">Spen<span>za</span></div> -->
         <% if (locals.user) { %>
             <ul class="nav-links">
                 <li><a href="/home" class="active">Home</a></li>
@@ -693,7 +694,8 @@
                 <span class="dot"></span>
                 Your money, clearly
             </div> -->
-            <h1>Your Money<br /><em>Organized in one place</em></h1>
+            <h1>Spen<em>za</em></h1>
+            <!-- <h1>Your Money<br /><em>Organized in one place</em></h1> -->
             <p>See where your money goes with simple expense tracking, budgets, and clear insights<p>
             <div class="hero-cta">
                 <a href="/register" class="btn btn-primary btn-lg">Start for free</a>
