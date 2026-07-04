@@ -11,15 +11,20 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #0e0f11; --surface: #16181c; --surface-2: #1e2026;
-      --border: rgba(255,255,255,.07); --border-hover: rgba(255,255,255,.14);
-      --border-focus: rgba(124,110,245,.6);
-      --text: #f0f0ee; --muted: #7a7c82;
-      --accent: #7c6ef5; --accent-glow: rgba(124,110,245,.15);
-      --green: #3ecf8e; --green-glow: rgba(62,207,142,.12);
-      --red: #f26c6c; --red-glow: rgba(242,108,108,.12);
-      --radius: 14px;
-    }
+            --bg: #0D0D0E;
+            --surface: #16181c;
+            --surface-2: #1e2026;
+            --border: rgba(255, 255, 255, 0.07);
+            --border-hover: rgba(255, 255, 255, 0.14);
+            --text: #f0f0ee;
+            --muted: #7a7c82;
+            --accent: #f59e0b;
+            --accent-glow: #343c312e; /*future work*/
+            --green: #3ecf8e;
+            --red: #f26c6c;
+            --amber: #f5a623;
+            --radius: 14px;
+        }
 
     body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
@@ -124,7 +129,7 @@
       padding: .5rem .9rem; border-radius: 999px; cursor: pointer; transition: .15s;
     }
     .pay-pills input:checked + .pay-pill {
-      background: var(--accent-glow); border-color: rgba(124,110,245,.5); color: #a99cf8;
+      background: var(--accent-glow); border-color: rgba(124,110,245,.5); color: #e83808;
     }
     .pay-pill:hover { border-color: var(--border-hover); color: var(--text); }
 
@@ -142,14 +147,14 @@
       border-radius: 10px; font-size: .9rem; font-weight: 600; cursor: pointer;
       transition: .15s; font-family: 'Inter', sans-serif;
     }
-    .btn-submit:hover { background: #6a5ee0; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(124,110,245,.35); }
+    .btn-submit:hover { background: #e83808; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(255, 255, 255, 0.35); }
     .btn-submit:active { transform: none; }
   </style>
 </head>
 <body>
 
   <nav>
-    <a href="/" class="logo">fl<span>o</span></a>
+    <a href="/home" class="logo">Spen<span>za</span></a>
     <ul class="nav-links">
       <li><a href="/home">Home</a></li>
       <li><a href="/dashboard">Dashboard</a></li>
