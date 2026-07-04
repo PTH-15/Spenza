@@ -11,15 +11,20 @@
     * { margin:0; padding:0; box-sizing:border-box; }
 
     :root {
-      --bg:#0e0f11; --surface:#16181c; --surface-2:#1e2026;
-      --border:rgba(255,255,255,.07); --border-hover:rgba(255,255,255,.14);
-      --border-focus:rgba(124,110,245,.6);
-      --text:#f0f0ee; --muted:#7a7c82;
-      --accent:#7c6ef5; --accent-glow:rgba(124,110,245,.15);
-      --green:#3ecf8e; --green-glow:rgba(62,207,142,.12);
-      --red:#f26c6c; --red-glow:rgba(242,108,108,.12);
-      --radius:14px;
-    }
+            --bg: #0D0D0E;
+            --surface: #16181c;
+            --surface-2: #1e2026;
+            --border: rgba(255, 255, 255, 0.07);
+            --border-hover: rgba(255, 255, 255, 0.14);
+            --text: #f0f0ee;
+            --muted: #7a7c82;
+            --accent: #f59e0b;
+            --accent-glow: #343c312e; /*future work*/
+            --green: #3ecf8e;
+            --red: #f26c6c;
+            --amber: #f5a623;
+            --radius: 14px;
+        }
 
     body {
       font-family:'Inter', sans-serif;
@@ -38,7 +43,7 @@
       z-index:100;
     }
     .logo { font-family:'Syne', sans-serif; font-size:1.35rem; font-weight:800; letter-spacing:-.5px; text-decoration:none; color:var(--text); }
-    .logo span { color:var(--accent); }
+    .logo span { color:#22c55e; }
     .nav-links { display:flex; gap:.25rem; list-style:none; }
     .nav-links a { text-decoration:none; color:var(--muted); font-size:.875rem; font-weight:500; padding:.45rem .85rem; border-radius:8px; transition:.15s; }
     .nav-links a:hover { color:var(--text); background:var(--surface); }
@@ -100,7 +105,7 @@
       flex:1; padding:.85rem; background:var(--accent); color:#fff; border:none; border-radius:10px;
       font-size:.9rem; font-weight:600; cursor:pointer; transition:.15s; font-family:'Inter',sans-serif;
     }
-    .btn-save:hover { background:#6a5ee0; transform:translateY(-1px); }
+    .btn-save:hover { background:#e83808; transform:translateY(-1px); }
 
     .btn-delete {
       padding:.85rem 1.2rem; background:transparent; color:var(--red); border:1px solid rgba(242,108,108,.3);
@@ -122,7 +127,7 @@
     }
     @keyframes modalIn { from{ opacity:0; transform:translateY(10px) scale(.98);} to{ opacity:1; transform:translateY(0) scale(1);} }
     .confirm-box .icon { font-size:2.25rem; margin-bottom:.75rem; }
-    .confirm-box h3 { font-family:'Syne', sans-serif; font-size:1.15rem; font-weight:700; margin-bottom:.5rem; }
+    .confirm-box h3 { font-family:'Sora', sans-serif; font-size:1.15rem; font-weight:700; margin-bottom:.5rem; }
     .confirm-box p { font-size:.85rem; color:var(--muted); margin-bottom:1.5rem; line-height:1.6; }
     .confirm-actions { display:flex; gap:.6rem; }
     .confirm-actions button, .confirm-actions a {
@@ -138,9 +143,9 @@
 <body>
 
   <nav>
-    <a href="/home" class="logo">fl<span>o</span></a>
+    <a href="/home" class="logo">Spen<span>za</span></a>
     <ul class="nav-links">
-      <li><a href="/">Home</a></li>
+      <li><a href="/home">Home</a></li>
       <li><a href="/dashboard">Dashboard</a></li>
       <li><a href="/transaction" class="active">Transactions</a></li>
       <li><a href="/reports">Reports</a></li>
@@ -203,7 +208,7 @@
 
         <div class="action-row">
           <button type="submit" class="btn-save">Save changes</button>
-          <button type="button" class="btn-delete" onclick="openConfirm()">🗑️ Delete</button>
+          <button type="button" class="btn-delete" onclick="openConfirm()">Delete</button>
         </div>
       </form>
     </div>
