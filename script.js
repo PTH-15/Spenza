@@ -112,10 +112,10 @@ app.post("/login", async (req, res) => {
             req.session.userId = user._id
 
             // console.log(req.session);
-            res.redirect('/transaction')
+            res.redirect('/home')
         }
         else {
-            res.send("Incorrect Password")
+            res.send("Password Error")
         }
     })
 

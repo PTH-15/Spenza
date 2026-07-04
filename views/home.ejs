@@ -65,7 +65,10 @@
         }
 
         .logo span {
-            color:var(--accent);
+            color:#22c55e;
+        }
+        .logo em{
+            color:var(--accent)
         }
 
         .nav-links {
@@ -669,7 +672,7 @@
     <!-- NAV -->
     <nav>
         <% if (locals.user) { %>
-            <div class="logo">Spen<span>za</span></div>
+            <div class="logo">Spen<span color="#22c55e">za</span></div>
             <ul class="nav-links">
                 <li><a href="/home" class="active">Home</a></li>
                 <li><a href="/dashboard">Dashboard</a></li>
@@ -701,7 +704,7 @@
             <!-- <h1>Your Money<br /><em>Organized in one place</em></h1> -->
             <p>See where your money goes with simple expense tracking, budgets, and clear insights<p>
                 <div class="hero-cta">
-                    <div class="logo hero_text">Your Money<span>Organized in one place</span></div>
+                    <div class="logo hero_text">Your Money<em>Organized in one place</em></div>
                     <div>
                         <a href="/register" class="btn btn-primary btn-lg">Start for free</a>
                         <a href="/login" class="btn btn-ghost btn-lg">I have an account</a>
@@ -872,7 +875,7 @@
             <% } %>
 
                 <footer>
-                    &copy; <%= new Date().getFullYear() %> Spenza — Personal Finance Tracker
+                    &copy; <%= new Date().getFullYear() %> Spenza — Personal Expense Tracker
                 </footer>
 
 </body>

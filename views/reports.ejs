@@ -29,17 +29,51 @@
 
     /* NAV */
     nav {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 1.25rem 2rem; border-bottom: 1px solid var(--border);
-      position: sticky; top: 0;
-      background: rgba(14,15,17,.88); backdrop-filter: blur(14px); z-index: 100;
-    }
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem 2rem;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: rgba(14, 15, 17, 0.88);
+            backdrop-filter: blur(14px);
+            z-index: 100;
+        }
     .logo { font-family: 'Syne', sans-serif; font-size: 1.35rem; font-weight: 800; letter-spacing: -.5px; text-decoration: none; color: var(--text); }
     .logo span { color: #22c55e; }
-    .nav-links { display: flex; gap: .25rem; list-style: none; }
-    .nav-links a { text-decoration: none; color: var(--muted); font-size: .875rem; font-weight: 500; padding: .45rem .85rem; border-radius: 8px; transition: .15s; }
-    .nav-links a:hover { color: var(--text); background: var(--surface); }
-    .nav-links a.active { color: var(--text); background: var(--surface-2); }
+    .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--muted);
+            font-size: 0.875rem;
+            font-weight: 500;
+            padding: 0.45rem 0.85rem;
+            border-radius: 8px;
+            transition: color 0.15s, background 0.15s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+            background: var(--surface);
+        }
+
+        .nav-links a.active {
+            color: var(--text);
+            background: var(--surface-2);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+        }
     .btn { font-size: .875rem; font-weight: 500; padding: .5rem 1.1rem; border-radius: 8px; border: none; cursor: pointer; text-decoration: none; transition: .15s; font-family: 'Inter', sans-serif; display: inline-flex; align-items: center; gap: .4rem; }
     .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
     .btn-ghost:hover { color: var(--text); border-color: var(--border-hover); background: var(--surface); }
@@ -182,7 +216,7 @@
 <body>
 
   <nav>
-    <a href="/" class="logo">Spen<span>za</span></a>
+    <a href="/home" class="logo">Spen<span>za</span></a>
     <ul class="nav-links">
       <li><a href="/home">Home</a></li>
       <li><a href="/dashboard">Dashboard</a></li>
