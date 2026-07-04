@@ -269,7 +269,7 @@ It helps others discover the project.
 
 <div align="center">
 
-### Built with ❤️ by Prathmesh Naphade (PTH)
+### Built by Prathmesh Naphade (PTH)
 
 **Spenza • Track Better • Spend Smarter**
 
